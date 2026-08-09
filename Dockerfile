@@ -15,6 +15,14 @@ RUN npm run build
 # ===== RUNTIME =====
 FROM alpine:3.22
 
+# Verknuepft das GHCR-Package mit dem Repo: ohne image.source zeigt GitHub das
+# Package weder in der Repo-Sidebar noch mit Beschreibung auf der Package-Seite.
+# Beim Push aus einer Action wird das Label automatisch gesetzt, beim Push von
+# Hand nicht.
+LABEL org.opencontainers.image.source="https://github.com/winnicodes/pocketwatch" \
+      org.opencontainers.image.description="Minimal self-hosted time tracking for freelancers" \
+      org.opencontainers.image.licenses="MIT"
+
 # nginx + php-fpm installieren (die App braucht nur Datei-IO und json_*, das ist Core)
 RUN apk add --no-cache nginx php84 php84-fpm
 
