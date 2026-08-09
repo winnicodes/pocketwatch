@@ -18,7 +18,9 @@ import { fileURLToPath } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const WEBAPP = join(HERE, '..');
 const DIST = join(WEBAPP, 'dist');
-const OUT = resolve(process.argv[2] ?? join(WEBAPP, '..', 'Pocketwatch-standalone.html'));
+// Default ist docs/index.html: das ist zugleich der Download fuer die README
+// und die Seite, die GitHub Pages aus dem docs-Ordner ausliefert.
+const OUT = resolve(process.argv[2] ?? join(WEBAPP, '..', 'docs', 'index.html'));
 
 const node = (args, opts = {}) =>
   execFileSync(process.execPath, args, { cwd: WEBAPP, ...opts });

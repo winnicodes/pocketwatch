@@ -22,8 +22,9 @@ One click to start, one PDF to invoice — and every byte stays on your own mach
 
 ## 🚀 Try it in 30 seconds
 
-**Download [`Pocketwatch-standalone.html`](Pocketwatch-standalone.html) and double-click it.**
-([direct link to the file](https://raw.githubusercontent.com/winnicodes/pocketwatch/main/Pocketwatch-standalone.html))
+**[▶ Open the live demo](https://winnicodes.github.io/pocketwatch/)** — or
+[download it](https://winnicodes.github.io/pocketwatch/) (right-click → save) and
+double-click the file to run it offline.
 
 One single HTML file: the whole app with demo data, no server, no Docker, no internet.
 Start, stop, search, filter, edit, export PDF and CSV — all of it real. The demo saves
@@ -32,7 +33,7 @@ nothing; a reload puts it back to where it started.
 The file is not a mockup, it is a build of the app:
 
 ```bash
-cd webapp && npm ci && npm run standalone   # writes ../Pocketwatch-standalone.html
+cd webapp && npm ci && npm run standalone   # writes ../docs/index.html
 ```
 
 ---
@@ -260,8 +261,10 @@ pocketwatch/
 │   ├── times.json          # time entries
 │   └── config.json         # settings
 │
-├── docs/                   # screenshots for this README
-├── Pocketwatch-standalone.html   # single-file demo (npm run standalone)
+├── docs/                   # published via GitHub Pages
+│   ├── index.html          # single-file demo (npm run standalone)
+│   └── *.png               # screenshots for this README
+│
 ├── Dockerfile              # production container (Nginx + PHP + dist)
 ├── nginx.conf              # Nginx configuration
 ├── docker-compose.yaml     # the recommended way to start
