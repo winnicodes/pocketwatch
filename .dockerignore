@@ -1,0 +1,7 @@
+# Host-node_modules enthaelt plattformspezifische Binaries (esbuild) und wuerde
+# das im Container installierte node_modules ueberschreiben.
+**/node_modules
+**/dist
+data
+.git
+*.ps1

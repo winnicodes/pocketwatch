@@ -1,0 +1,11 @@
+services:
+  pocketwatch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pocketwatch
+    ports:
+      - "8080:80"
+    volumes:
+      - ./data:/var/www/html/data
+    restart: unless-stopped

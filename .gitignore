@@ -1,0 +1,11 @@
+data/
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+
+# Local notes and agent tooling
+ToDo
+.claude/
+.agents/
+skills-lock.json

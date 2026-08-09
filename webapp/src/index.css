@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+/* Selbst gehostet statt ueber Google Fonts: die App laeuft self-hosted, teils
+   ohne Internet - ueber eine CDN wuerde das Design dort still auf system-ui
+   zurueckfallen. Instrument Sans ist eine Variable Font, eine Datei je
+   Unicode-Bereich deckt 400-700 ab. */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/instrument-sans-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/instrument-sans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/space-mono-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/space-mono-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/space-mono-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/space-mono-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@theme {
+  /* Redesign: neutral dark, amber accent only for running time / primary actions / sums */
+  --color-primary: #f5c065;
+  --color-primary-dark: #ffd98a; /* hover state is lighter in the new design */
+  --color-darker: #0e0f11;       /* app surface / right pane */
+  --color-dark: #111316;         /* bars, side pane */
+  --color-card: #16181b;         /* cards, inputs, rows */
+  --color-elevated: #1c1f23;     /* hover surface, chips */
+  --color-active: #2b3037;       /* selected segment */
+  --color-on-primary: #15181b;   /* text/icons on amber */
+  --color-light: #e9ebee;
+  --color-muted: #969ca4;
+  --color-dim: #6b7178;
+  --color-danger: #e5484d;
+  --color-border-color: #262a2f; /* component outlines */
+  --color-divider: #1f2327;      /* structural rules: header, panes, footer */
+
+  --font-sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --radius-md: 14px;  /* inputs */
+  --radius-lg: 15px;  /* primary actions */
+  --radius-xl: 22px;  /* cards */
+}
+
+@layer base {
+  /* native dark widgets for date/time inputs and scrollbars */
+  :root {
+    color-scheme: dark;
+  }
+
+  /* Die Pfeil-Buttons an den Enden der Schiene sollen weg, der Balken reicht.
+     Dafuer gibt es keine Standard-Eigenschaft, nur ::-webkit-scrollbar-button
+     - und Chromium ignoriert die ::-webkit-scrollbar-Pseudoelemente komplett,
+     sobald scrollbar-width oder scrollbar-color gesetzt ist. Die Standard-
+     Eigenschaften gehen deshalb nur an Gecko, das die Pseudoelemente nicht
+     kennt; Blink und WebKit werden ueber die Pseudoelemente bedient.
+     Beide Wege ergeben denselben duennen Balken auf transparenter Schiene. */
+  @supports (-moz-appearance: none) {
+    :root {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-border-color) transparent;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    /* Chromium clippt die Scrollbar nicht am border-radius - ohne diesen
+       Abstand laeuft der Balken in gerundeten Feldern in die Ecke und steht
+       ueber der Kante. Etwa so gross wie der groesste Radius eines
+       Scrollbereichs (Textarea im Bearbeiten-Dialog, 13px). */
+    margin-block: 12px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-color);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  body {
+    background: var(--color-darker);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* amber focus for every field — beats repeating focus:border-primary per input */
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--color-primary);
+    outline: none;
+  }
+
+  ::placeholder { color: var(--color-dim); }
+  ::selection { background: var(--color-primary); color: #15181b; }
+
+  /* Datum, Monat und Uhrzeit laufen ueber PickerField statt ueber die nativen
+     Felder - deren Panel ist Browser-Chrome und nicht gestaltbar. */
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* react-day-picker aufs Design ziehen: es liefert die Bedienung (Pfeiltasten,
+   Pos1/Ende, PageUp/Down, ARIA-Raster, Locales), das Aussehen kommt von hier.
+   Bewusst NICHT in @layer base - das mitgelieferte style.css ist ungelayert,
+   und ungelayerte Regeln schlagen in der Kaskade jede Layer. */
+.pw-calendar {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: var(--color-elevated);
+  --rdp-today-color: var(--color-primary);
+  --rdp-selected-border: none;
+  --rdp-day-width: 36px;
+  --rdp-day-height: 36px;
+  --rdp-nav-height: 32px;
+  --rdp-outside-opacity: 0.45;
+  --rdp-weekday-opacity: 1;
+  margin: 0;
+  color: var(--color-light);
+  font-size: 14px;
+}
+.pw-calendar .rdp-month_caption {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-light);
+}
+.pw-calendar .rdp-weekday {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-dim);
+}
+.pw-calendar .rdp-day_button {
+  width: var(--rdp-day-width);
+  height: var(--rdp-day-height);
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.pw-calendar .rdp-day_button:hover { background: var(--color-elevated); }
+.pw-calendar .rdp-today .rdp-day_button { color: var(--color-primary); font-weight: 700; }
+.pw-calendar .rdp-outside .rdp-day_button { color: var(--color-dim); }
+.pw-calendar .rdp-selected .rdp-day_button {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 700;
+}
+/* Der Tastaturfokus soll amber sein, nicht das Browser-Blau. */
+.pw-calendar .rdp-day_button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}

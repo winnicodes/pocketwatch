@@ -1,0 +1,37 @@
+{
+  "name": "pocketwatch",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "node --experimental-strip-types --test src/entryTimes.test.ts",
+    "demo-data": "node scripts/demo-data.mjs",
+    "standalone": "node scripts/standalone.mjs"
+  },
+  "dependencies": {
+    "baseline-browser-mapping": "^2.11.12",
+    "date-fns": "^4.4.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lucide-react": "^0.417.0",
+    "react": "^19.2.0",
+    "react-day-picker": "^10.0.1",
+    "react-dom": "^19.2.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.2.2",
+    "vite": "^7.2.2"
+  }
+}
