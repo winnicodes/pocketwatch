@@ -4,4 +4,6 @@
 **/dist
 data
 .git
+docs
 *.ps1
+*.md

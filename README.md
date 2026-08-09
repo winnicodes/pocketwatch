@@ -176,15 +176,42 @@ dialogs into full-screen views — no shrunk-down desktop, no pinch-zooming, no 
 
 ## 🐳 Install with Docker (recommended, Windows + Linux)
 
-The container builds the frontend itself — you do **not** need Node on the host.
+A ready-built image is on the GitHub Container Registry, so there is nothing to
+compile and you do **not** need Node on the host:
+
+```bash
+docker run -d --name pocketwatch -p 8080:80 \
+  -v "$(pwd)/data:/var/www/html/data" \
+  ghcr.io/winnicodes/pocketwatch:latest
+```
+
+Open <http://localhost:8080> — your time entries live in the mounted `data/` folder.
+
+Tagged releases are published under their version as well, e.g.
+`ghcr.io/winnicodes/pocketwatch:1.0.0`. Pin that if you would rather decide
+yourself when to update.
+
+### Unraid
+
+*Docker → Add Container*, then:
+
+| Field | Value |
+|---|---|
+| Repository | `ghcr.io/winnicodes/pocketwatch:latest` |
+| Port | `8080` (host) → `80` (container) |
+| Path | `/mnt/user/appdata/pocketwatch` (host) → `/var/www/html/data` (container) |
+
+The image is `linux/amd64`, which is what Unraid runs.
+
+### Build it yourself
+
+The container compiles the frontend from source — still no Node on the host.
 
 ```bash
 git clone https://github.com/winnicodes/pocketwatch.git
 cd pocketwatch
 docker compose up -d --build
 ```
-
-Open <http://localhost:8080>
 
 Your time entries then live in the `data/` folder next to `docker-compose.yaml`.
 

@@ -6,6 +6,8 @@ Thumbs.db
 
 # Local notes and agent tooling
 ToDo
+RELEASE.local.md
+*.local.md
 .claude/
 .agents/
 skills-lock.json
