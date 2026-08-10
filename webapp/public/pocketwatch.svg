@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Ebene_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 500 500">
-  <!-- Generator: Adobe Illustrator 29.3.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 151)  -->
-  <defs>
-    <style>
-      .st0 {
-        fill: #f5c065;
-      }
-    </style>
-  </defs>
-  <circle class="st0" cx="250" cy="250" r="100"/>
-  <path class="st0" d="M250,0C111.9,0,0,111.9,0,250s28.7,133.1,75,178.5v-178.5c0-96.6,78.4-175,175-175s175,78.4,175,175-78.4,175-175,175-71.7-11.6-100-31.4v85.6c30.6,13.4,64.4,20.8,100,20.8,138.1,0,250-111.9,250-250S388.1,0,250,0Z"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 29.3.1, SVG Export Plug-In . SVG Version: 9.03 Build 55982)  -->
+<svg version="1.0" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 500 500" enable-background="new 0 0 500 500" xml:space="preserve">
+<g>
+	<circle fill="#F5C065" cx="250" cy="250" r="100"/>
+</g>
+<g>
+	<path fill="#F5C065" d="M250,0C111.9,0,0,111.9,0,250c0,69.9,28.7,133.1,75,178.5V250c0-96.6,78.4-175,175-175s175,78.4,175,175
+		s-78.4,175-175,175c-37.2,0-71.7-11.6-100-31.4v85.6c30.6,13.4,64.4,20.8,100,20.8c138.1,0,250-111.9,250-250S388.1,0,250,0z"/>
+</g>
 </svg>
