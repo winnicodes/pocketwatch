@@ -188,7 +188,7 @@ docker run -d --name pocketwatch -p 8080:80 \
 Open <http://localhost:8080> — your time entries live in the mounted `data/` folder.
 
 Tagged releases are published under their version as well, e.g.
-`ghcr.io/winnicodes/pocketwatch:1.0.0`. Pin that if you would rather decide
+`ghcr.io/winnicodes/pocketwatch:1.0.1`. Pin that if you would rather decide
 yourself when to update.
 
 ### Unraid

@@ -18,7 +18,13 @@
   <Category>Productivity: Tools:Utilities</Category>
   <ExtraSearchTerms>time tracking timesheet freelance invoice timer stopwatch</ExtraSearchTerms>
   <License>MIT</License>
-  <Changes>1.0.0 - initial release</Changes>
+  <Changes>
+### 1.0.1
+- Corrected logo artwork
+
+### 1.0.0
+- Initial release
+  </Changes>
   <Date>2026-08-10</Date>
   <MinVer>6.9</MinVer>
 
