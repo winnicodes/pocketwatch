@@ -1,0 +1,13 @@
+<CommunityApplications>
+  <Profile>
+    **pocketwatch** — minimal self-hosted time tracking for freelancers.
+
+    Start and stop a timer, edit entries, filter by client or period, export a PDF
+    report or CSV. Two JSON files on your own disk: no account, no database, no
+    telemetry, no request leaving the machine.
+
+    Questions and bug reports: https://github.com/winnicodes/pocketwatch/issues
+  </Profile>
+  <Icon>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/webapp/public/icon-512.png</Icon>
+  <WebPage>https://github.com/winnicodes/pocketwatch</WebPage>
+</CommunityApplications>

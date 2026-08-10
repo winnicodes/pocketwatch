@@ -1,0 +1,33 @@
+<Container version="2">
+  <Name>pocketwatch</Name>
+  <Repository>ghcr.io/winnicodes/pocketwatch:latest</Repository>
+  <Registry>https://ghcr.io/winnicodes/pocketwatch</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+
+  <Icon>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/webapp/public/icon-512.png</Icon>
+  <WebUI>http://[IP]:[PORT:80]</WebUI>
+
+  <Overview>Minimal self-hosted time tracking for freelancers. Start and stop a timer, edit entries, filter by client or period, and export a PDF report or CSV. Data lives in two JSON files in the mounted appdata folder - no database, no account, no telemetry, no outbound requests. The API has no authentication, so keep the container on your LAN or behind a reverse proxy that handles auth.</Overview>
+
+  <Project>https://github.com/winnicodes/pocketwatch</Project>
+  <TemplateURL>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/templates/pocketwatch.xml</TemplateURL>
+  <ReadMe>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/README.md</ReadMe>
+
+  <Category>Productivity: Tools:Utilities</Category>
+  <ExtraSearchTerms>time tracking timesheet freelance invoice timer stopwatch</ExtraSearchTerms>
+  <License>MIT</License>
+  <Changes>1.0.0 - initial release</Changes>
+  <Date>2026-08-10</Date>
+  <MinVer>6.9</MinVer>
+
+  <Screenshot>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/docs/desktop-overview.png</Screenshot>
+  <Screenshot>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/docs/desktop-export.png</Screenshot>
+  <Screenshot>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/docs/mobile-track.png</Screenshot>
+
+  <!-- The container runs nginx on port 80 and fixes ownership of the data folder
+       at startup, so no PUID/PGID variables are needed. -->
+  <Config Name="WebUI" Target="80" Default="8080" Mode="tcp" Description="HTTP port for the WebUI." Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="Data" Target="/var/www/html/data" Default="/mnt/user/appdata/pocketwatch" Mode="rw" Description="times.json and config.json live here. Back this folder up." Type="Path" Display="always" Required="true" Mask="false"/>
+</Container>
