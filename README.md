@@ -44,9 +44,9 @@ export. The demo does not save data. If you reload the page, the demo starts aga
 
 ## 🎬 Functions
 
-### ⏱️ Track
-
 <img src="docs/desktop-idle.png" alt="The Track view with the client list and the Clock In button">
+
+### ⏱️ Track
 
 - 📇 Client list, most recent first
 - ⏱️ Timer to the second
@@ -58,9 +58,9 @@ If you do not enter a client, the entry gets the name “No client”.
 
 ---
 
-### 📜 History
-
 <img src="docs/desktop-search.png" alt="The history filtered by a search for Gutenberg">
+
+### 📜 History
 
 - 🔍 Search in the client and the activity
 - 📅 Grouped by day
@@ -70,18 +70,18 @@ If you do not enter a client, the entry gets the name “No client”.
 
 ---
 
-### 🗓️ Period
-
 <img src="docs/desktop-period.png" alt="The history filtered to the current week with the period selector">
+
+### 🗓️ Period
 
 Select **Day**, **Week**, **Month** or **Year**. Use the arrows to go to an earlier or a later
 period. The total changes with the period. Select **All** to show the full history.
 
 ---
 
-### ✏️ Edit
-
 <img src="docs/desktop-edit.png" alt="The Edit Entry dialog with date, time and duration">
+
+### ✏️ Edit
 
 - 📆 Start and end with date and time
 - ⏳ The duration updates immediately
@@ -91,9 +91,9 @@ period. The total changes with the period. Select **All** to show the full histo
 
 ---
 
-### 📤 Export
-
 <img src="docs/desktop-export.png" alt="The Export dialog with the PDF and CSV cards and the period selector">
+
+### 📤 Export
 
 - 📄 PDF report with your name and page numbers
 - 📊 CSV with semicolons and a BOM for Excel
@@ -105,9 +105,9 @@ The dialog shows the number of entries and the total hours before you export.
 
 ---
 
-### ⚙️ Settings
-
 <img src="docs/desktop-settings.png" alt="Settings with rounding switched on and the interval control">
+
+### ⚙️ Settings
 
 - 👤 Name for the PDF
 - 🌐 German or English
