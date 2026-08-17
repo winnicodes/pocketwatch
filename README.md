@@ -56,6 +56,8 @@ export. The demo does not save data. If you reload the page, the demo starts aga
 
 If you do not enter a client, the entry gets the name “No client”.
 
+---
+
 ### 📜 History
 
 <img src="docs/desktop-search.png" alt="The history filtered by a search for Gutenberg">
@@ -66,12 +68,16 @@ If you do not enter a client, the entry gets the name “No client”.
 - ➕ Long text expands with **more**
 - Σ Total of the selection in the footer
 
+---
+
 ### 🗓️ Period
 
 <img src="docs/desktop-period.png" alt="The history filtered to the current week with the period selector">
 
 Select **Day**, **Week**, **Month** or **Year**. Use the arrows to go to an earlier or a later
 period. The total changes with the period. Select **All** to show the full history.
+
+---
 
 ### ✏️ Edit
 
@@ -82,6 +88,8 @@ period. The total changes with the period. Select **All** to show the full histo
 - ⌨️ Pickers that you can operate with the keyboard
 - 🚫 The app rejects an end before the start
 - ❓ Delete asks first
+
+---
 
 ### 📤 Export
 
@@ -94,6 +102,8 @@ period. The total changes with the period. Select **All** to show the full histo
 - ✂️ Times only, without activities
 
 The dialog shows the number of entries and the total hours before you export.
+
+---
 
 ### ⚙️ Settings
 
