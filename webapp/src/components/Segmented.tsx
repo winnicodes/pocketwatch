@@ -39,8 +39,11 @@ const Segmented = <T extends string>({ value, options, onChange, ariaLabel, mono
           role="radio"
           aria-checked={on}
           onClick={() => onChange(option.value)}
-          className={`h-8 px-3.5 rounded-[9px] text-sm transition-colors ${mono ? 'font-mono' : ''} ${
-            pills ? 'h-9 lg:h-8 rounded-full lg:rounded-[9px] ' : ''
+          // min-h statt h: schmale Schienen lassen lange Beschriftungen umbrechen,
+          // und bei fester Hoehe stand die zweite Zeile unten aus dem Knopf heraus.
+          // Der Knopf waechst jetzt mit, py haelt den Text dabei mittig.
+          className={`min-h-8 px-3.5 py-1.5 flex items-center justify-center text-center leading-tight rounded-[9px] text-sm transition-colors ${mono ? 'font-mono' : ''} ${
+            pills ? 'min-h-9 lg:min-h-8 rounded-full lg:rounded-[9px] ' : ''
           }${
             on
               ? `text-light font-semibold ${pills ? 'bg-primary text-on-primary lg:bg-active lg:text-light' : 'bg-active'}`

@@ -6,6 +6,15 @@ const DELAY_MS = 500;
 const timers: Record<string, number> = {};
 const pending: Record<string, unknown> = {};
 
+// Ein Speicherfehler nur in der Konsole ist fuer den Nutzer unsichtbar: er tippt
+// weiter und merkt erst beim Neuladen, dass nichts angekommen ist. Das Ereignis
+// hebt die App an die Oberflaeche - ohne eigenen Zustandsspeicher, weil persist
+// kein Hook ist und aus jedem Modul erreichbar sein muss.
+export function reportStorageError(message: string, err?: unknown) {
+  console.error(message, err ?? "");
+  window.dispatchEvent(new CustomEvent("pw-storage-error"));
+}
+
 function flush(file: string, useBeacon = false) {
   if (!(file in pending)) return;
 
@@ -27,9 +36,9 @@ function flush(file: string, useBeacon = false) {
     .then(res => {
       // Nicht stillschweigend schlucken - sonst sieht ein Schreibfehler
       // (z.B. fehlende Rechte auf data/) fuer den Nutzer wie Erfolg aus.
-      if (!res.ok) console.error(`Speichern von ${file} fehlgeschlagen: HTTP ${res.status}`);
+      if (!res.ok) reportStorageError(`Speichern von ${file} fehlgeschlagen: HTTP ${res.status}`);
     })
-    .catch(err => console.error(`Speichern von ${file} fehlgeschlagen:`, err));
+    .catch(err => reportStorageError(`Speichern von ${file} fehlgeschlagen:`, err));
 }
 
 export function save(file: string, data: unknown) {

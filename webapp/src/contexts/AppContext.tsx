@@ -8,7 +8,6 @@ interface Settings {
   name: string;
   language: 'de' | 'en';
   timeFormat: '12h' | '24h';
-  showWeekTotal: boolean;
   stickyDayHeaders: boolean;
   rounding: boolean;
   roundMinutes: number;
@@ -36,7 +35,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       name: "",
       language: "de",
       timeFormat: "24h",
-      showWeekTotal: true,
       stickyDayHeaders: true,
       // Runden greift in die abgerechneten Zahlen ein - das schaltet man selbst ein.
       rounding: false,

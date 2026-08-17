@@ -5,7 +5,7 @@
 # pocketwatch
 
 **Time tracking for freelancers and the self-employed.
-One click to start, one PDF to invoice — and every byte stays on your own machine.**
+Start the timer with one click. Send the PDF to the client. All data stays on your machine.**
 
 ![Self-hosted](https://img.shields.io/badge/self--hosted-yes-f5c065?style=flat-square)
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
@@ -16,25 +16,17 @@ One click to start, one PDF to invoice — and every byte stays on your own mach
 
 </div>
 
-<img src="docs/desktop-overview.png" alt="pocketwatch on the desktop: running stopwatch on the left, history grouped by day on the right">
+<img src="docs/desktop-overview.png" alt="pocketwatch on the desktop: the running timer on the left, the history grouped by day on the right">
 
 ---
 
-## 🚀 Try it in 30 seconds
+## 🚀 Try it yourself
 
-**[▶ Open the live demo](https://winnicodes.github.io/pocketwatch/)** — or
-[download it](https://winnicodes.github.io/pocketwatch/) (right-click → save) and
-double-click the file to run it offline.
+**[▶ Open the live demo](https://winnicodes.github.io/pocketwatch/)**
 
-One single HTML file: the whole app with demo data, no server, no Docker, no internet.
-Start, stop, search, filter, edit, export PDF and CSV — all of it real. The demo saves
-nothing; a reload puts it back to where it started.
-
-The file is not a mockup, it is a build of the app:
-
-```bash
-cd webapp && npm ci && npm run standalone   # writes ../docs/index.html
-```
+The demo is one HTML file. It contains the full app and demo data. You do not need a
+server, Docker or an internet connection. You can start, stop, search, filter, edit and
+export. The demo does not save data. If you reload the page, the demo starts again.
 
 ---
 
@@ -42,142 +34,122 @@ cd webapp && npm ci && npm run standalone   # writes ../docs/index.html
 
 |  | |
 |---|---|
-| 🔒 **Your data stays yours** | Two JSON files on your own disk. No account, no subscription, no tracking, not a single request leaving the machine — even the fonts ship inside the container. |
-| ⚡ **As fast as a pocket calculator** | No spinner, no database. Start and stop are one click, the timer keeps counting to the second and survives a reload. |
-| 🧾 **Ready to invoice** | A PDF report with your name on it, or CSV for your spreadsheet and bookkeeping — either the filtered view or a date range you pick. |
-| 📱 **Works in either hand** | The same app on a 27-inch monitor and on a phone: two columns here, cards and a drawer there. |
-| 🐳 **One container, done** | `docker compose up -d --build`. Runs on a NAS, a Raspberry Pi or your laptop. |
+| 🔒 **Your data stays yours** | The app writes two JSON files to your disk. There is no account, no subscription and no tracking. No data leaves the machine. The container also contains the fonts. |
+| ⚡ **Fast** | There is no database and no loading spinner. Start and stop are one click. The timer counts each second and continues after a reload. |
+| 🧾 **Ready to invoice** | Make a PDF report with your name on it, or a CSV file for your spreadsheet. Export the filtered view or a date range. |
+| 📱 **Desktop and phone** | The layout has two columns on a large screen. On a phone it shows one view at a time. |
+| 🐳 **One container** | Use `docker compose up -d --build`. The container runs on a NAS, a Raspberry Pi or a laptop. |
 
 ---
 
-## 🎬 The app, feature by feature
+## 🎬 Functions
 
-### ⏱️ Track — client, activity, go
+### ⏱️ Track
 
-<img src="docs/desktop-idle.png" alt="Track view with client autocomplete and the Clock In button">
+<img src="docs/desktop-idle.png" alt="The Track view with the client list and the Clock In button">
 
-- **Client autocomplete** — most recently used clients first, pick with the arrow keys
-- **Clock In** starts immediately; the activity text can still be typed **while the timer runs**
-- **Live timer to the second**, with **Today** and **Week** totals right below it
-- Forgot the client name? The entry lands under “No client” — nothing gets lost
-- Timer running for more than 8 hours → **“forgot to clock out?” hint** (can be turned off)
+- 📇 Client list, most recent first
+- ⏱️ Timer to the second
+- ✍️ Change the activity while the timer runs
+- 📊 Totals for today and this week
+- ⚠️ Notice after 8 hours
 
-### 📜 History — grouped by day, totalled at the bottom
+If you do not enter a client, the entry gets the name “No client”.
 
-<img src="docs/desktop-search.png" alt="History filtered by a search for Gutenberg">
+### 📜 History
 
-- **Grouped by day** with a date heading, **total duration of the current selection** always visible in the footer
-- **Full-text search** across client *and* activity, filtering as you type
-- Day headings stick to the top while you scroll (can be turned off)
-- Long activity texts are clipped and expand on **“more”**
-- Large histories load in chunks — the totals still count every match, not just the visible rows
+<img src="docs/desktop-search.png" alt="The history filtered by a search for Gutenberg">
 
-### 🗓️ Period — day, week, month, year, and step back through time
+- 🔍 Search in the client and the activity
+- 📅 Grouped by day
+- 📌 The day heading stays at the top
+- ➕ Long text expands with **more**
+- Σ Total of the selection in the footer
 
-<img src="docs/desktop-period.png" alt="History filtered to the current week with the period stepper">
+### 🗓️ Period
 
-Click **Day / Week / Month / Year**, then step backwards with the arrows — the total is
-recalculated for every period. “All” brings back the complete history.
+<img src="docs/desktop-period.png" alt="The history filtered to the current week with the period selector">
 
-### ✏️ Edit — fix it, or add what you forgot
+Select **Day**, **Week**, **Month** or **Year**. Use the arrows to go to an earlier or a later
+period. The total changes with the period. Select **All** to show the full history.
 
-<img src="docs/desktop-edit.png" alt="Edit entry dialog with date, time and live duration">
+### ✏️ Edit
 
-- Client, activity, **start and end by date and time** — the **duration updates live**
-- Custom date and time pickers instead of browser chrome: same design, fully keyboard-operable
-- Invalid times are rejected (end before start, a half-filled end)
-- **Deleting always asks first** — and unsaved changes ask before the dialog closes
+<img src="docs/desktop-edit.png" alt="The Edit Entry dialog with date, time and duration">
 
-### 📤 Export — PDF for the client, CSV for the office
+- 📆 Start and end with date and time
+- ⏳ The duration updates immediately
+- ⌨️ Pickers that you can operate with the keyboard
+- 🚫 The app rejects an end before the start
+- ❓ Delete asks first
 
-<img src="docs/desktop-export.png" alt="Export dialog with PDF/CSV cards and a custom date range">
+### 📤 Export
 
-- **PDF**: formatted report with your name, page numbers, optionally the export date in the footer
-- **CSV**: semicolon-separated with a BOM — Excel opens it without mangling accented characters
-- **Current view** (inherits search and period filter) or a **custom date range**
-- **Newest first** and **times only, no activities** for the compact list
-- The dialog tells you up front how many entries and how many hours will end up in the file
+<img src="docs/desktop-export.png" alt="The Export dialog with the PDF and CSV cards and the period selector">
 
-### ⚙️ Settings — including rounding
+- 📄 PDF report with your name and page numbers
+- 📊 CSV with semicolons and a BOM for Excel
+- 🎯 Current view, a standard period or a date range
+- 🔀 Newest first
+- ✂️ Times only, without activities
 
-<img src="docs/desktop-settings.png" alt="Settings with rounding enabled and the interval stepper">
+The dialog shows the number of entries and the total hours before you export.
 
-- **Name** for the header of the PDF export
-- **German / English** and **12h / 24h** — date formats follow along
-- **Week total** in the header and **sticky day headings** on or off
-- **Round times** to a fixed interval (1–60 min), optionally always upwards — with a live
-  example (“00:37 becomes 00:30”). Rounding applies everywhere: history, totals, PDF, CSV.
-- **Reminder** for timers left running
+### ⚙️ Settings
+
+<img src="docs/desktop-settings.png" alt="Settings with rounding switched on and the interval control">
+
+- 👤 Name for the PDF
+- 🌐 German or English
+- 🕐 12-hour or 24-hour
+- 📌 Pin the day heading
+- ⚠️ Reminder for a long timer
+- 🔢 **Round times** to an interval from 1 to 60 minutes, up or to the nearest interval
+
+The settings show an example of the rounding. Rounding applies to the history, the totals,
+the PDF and the CSV.
 
 ---
 
-## 📱 Responsive — same app, different hand
+## 📱 Responsive
 
-Below 1024 px the two-column layout becomes one view at a time, switched through the
-drawer. Search, filter and export move into the header, table rows turn into cards and
-dialogs into full-screen views — no shrunk-down desktop, no pinch-zooming, no second app.
+Below 1024 px the app shows one view at a time. Use the drawer to change the view. Search,
+filter and export move into the header. Table rows become cards. Dialogs fill the screen.
 
 <table>
 <tr>
-<td width="25%"><img src="docs/mobile-track.png" alt="Track view on a phone"><br><sub><b>Track</b> — running timer</sub></td>
-<td width="25%"><img src="docs/mobile-history.png" alt="History as cards"><br><sub><b>History</b> — cards, not a table</sub></td>
-<td width="25%"><img src="docs/mobile-drawer.png" alt="Navigation drawer"><br><sub><b>Drawer</b> — switch sections</sub></td>
-<td width="25%"><img src="docs/mobile-filter.png" alt="Period filter on a phone"><br><sub><b>Filter</b> — period as pills</sub></td>
+<td width="25%"><img src="docs/mobile-track.png" alt="The Track view on a phone"><br><sub>⏱️ <b>Track</b></sub></td>
+<td width="25%"><img src="docs/mobile-history.png" alt="The history as cards"><br><sub>📜 <b>History</b></sub></td>
+<td width="25%"><img src="docs/mobile-drawer.png" alt="The navigation drawer"><br><sub>☰ <b>Drawer</b></sub></td>
+<td width="25%"><img src="docs/mobile-filter.png" alt="The period filter on a phone"><br><sub>🗓️ <b>Period</b></sub></td>
 </tr>
 <tr>
-<td><img src="docs/mobile-edit.png" alt="Editing full screen"><br><sub><b>Edit</b> — full screen</sub></td>
-<td><img src="docs/mobile-export.png" alt="Export full screen"><br><sub><b>Export</b> — same options</sub></td>
-<td><img src="docs/mobile-settings.png" alt="Settings on a phone"><br><sub><b>Settings</b> — all of them</sub></td>
-<td valign="middle"><sub>Manifest, icons and theme colour are included: “Add to Home Screen” gives pocketwatch its own icon that opens without a browser bar.</sub></td>
+<td><img src="docs/mobile-edit.png" alt="Edit on the full screen"><br><sub>✏️ <b>Edit</b></sub></td>
+<td><img src="docs/mobile-export.png" alt="Export on the full screen"><br><sub>📤 <b>Export</b></sub></td>
+<td><img src="docs/mobile-settings.png" alt="Settings on a phone"><br><sub>⚙️ <b>Settings</b></sub></td>
+<td valign="middle"><sub>The app has a manifest, icons and a theme colour. Use “Add to Home Screen” to open pocketwatch without a browser bar.</sub></td>
 </tr>
 </table>
 
 ---
 
-## ✨ Every feature at a glance
+## 🔧 Under the hood
 
-**Tracking**
-- One-click start/stop, live timer accurate to the second
-- A running entry survives a reload or a device switch (it lives in `times.json`)
-- Client autocomplete, activity editable at any time
-- Totals for today and the current week
-- Warning for timers running longer than 8 hours
-
-**History**
-- Grouped by day, total duration of the filtered selection in the footer
-- Full-text search across client and activity
-- Period filter day/week/month/year/all with stepping backwards and forwards
-- Sticky day headings, expandable activity texts, chunked loading
-
-**Editing**
-- Client, activity, start and end (date + time), duration calculated live
-- Custom date/time pickers, fully keyboard-operable
-- Validation of impossible times, confirmation before deleting or discarding
-
-**Export**
-- PDF report (name, page numbers, optional export date)
-- CSV for Excel and bookkeeping (semicolon + BOM)
-- Current view or custom date range, sort direction, “times only” variant
-
-**Settings**
-- German/English, 12h/24h
-- Rounding to 1–60 min, to the nearest interval or always upwards
-- Week total, sticky day headings, long-run reminder
-- Name for the PDF export
-
-**Under the hood**
-- Storage in `data/times.json` and `data/config.json`, written atomically
-- Writes are debounced; nothing is lost when the tab is closed
-- Docker container (Nginx + PHP-FPM on Alpine)
-- Self-hosted fonts, no CDN, no telemetry
-- Keyboard-operable, ARIA roles for switches, listboxes and dialogs
+- The app stores the data in `data/times.json` and `data/config.json`.
+- Each write goes to a temporary file first. The app then renames the file.
+- Writes are debounced. No data is lost when you close the tab.
+- A running entry continues after a reload or on a different device.
+- The history loads in parts. The totals count all matches, not only the visible rows.
+- The container has Nginx and PHP-FPM on Alpine Linux.
+- The fonts are in the container. There is no CDN and no telemetry.
+- You can operate the app with the keyboard. Switches, lists and dialogs have ARIA roles.
 
 ---
 
-## 🐳 Install with Docker (recommended, Windows + Linux)
+## 🐳 Installation with Docker
 
-A ready-built image is on the GitHub Container Registry, so there is nothing to
-compile and you do **not** need Node on the host:
+The image is on the GitHub Container Registry. You do not have to compile it, and you do
+not need Node.js on the host:
 
 ```bash
 docker run -d --name pocketwatch -p 8080:80 \
@@ -185,15 +157,29 @@ docker run -d --name pocketwatch -p 8080:80 \
   ghcr.io/winnicodes/pocketwatch:latest
 ```
 
-Open <http://localhost:8080> — your time entries live in the mounted `data/` folder.
+Open <http://localhost:8080>. The app writes the time entries to the mounted `data/` folder.
 
-Tagged releases are published under their version as well, e.g.
-`ghcr.io/winnicodes/pocketwatch:1.0.1`. Pin that if you would rather decide
-yourself when to update.
+Each release also has a version tag, for example `ghcr.io/winnicodes/pocketwatch:1.1.0`. Use
+a version tag if you want to control when you update.
 
 ### Unraid
 
-*Docker → Add Container*, then:
+pocketwatch is in **Community Applications**. Open the *Apps* tab, search for `pocketwatch`
+and select *Install*. The template contains the WebUI link, the port and the appdata path.
+The default values are correct:
+
+| Setting | Default |
+|---|---|
+| WebUI | `8080` (host) → `80` (container) |
+| Data | `/mnt/user/appdata/pocketwatch` → `/var/www/html/data` |
+
+To update, use *Docker → Check for Updates → Apply*. You do not have to set PUID or PGID.
+The container corrects the owner of the appdata folder at start.
+
+<details>
+<summary>Add the container manually</summary>
+
+Do this only if you do not use Community Applications. Select *Docker → Add Container*, then:
 
 | Field | Value |
 |---|---|
@@ -201,11 +187,13 @@ yourself when to update.
 | Port | `8080` (host) → `80` (container) |
 | Path | `/mnt/user/appdata/pocketwatch` (host) → `/var/www/html/data` (container) |
 
-The image is `linux/amd64`, which is what Unraid runs.
+</details>
 
-### Build it yourself
+The image is `linux/amd64`. Unraid uses this architecture.
 
-The container compiles the frontend from source — still no Node on the host.
+### Build the image yourself
+
+The container compiles the frontend. You do not need Node.js on the host.
 
 ```bash
 git clone https://github.com/winnicodes/pocketwatch.git
@@ -213,11 +201,11 @@ cd pocketwatch
 docker compose up -d --build
 ```
 
-Your time entries then live in the `data/` folder next to `docker-compose.yaml`.
+The app writes the time entries to the `data/` folder next to `docker-compose.yaml`.
 
 ### Without docker-compose
 
-Linux / macOS:
+Linux and macOS:
 
 ```bash
 docker build -t pocketwatch-app .
@@ -231,42 +219,42 @@ docker build -t pocketwatch-app .
 docker run -d -p 8080:80 -v "${PWD}/data:/var/www/html/data" --name pocketwatch pocketwatch-app
 ```
 
-> Docker does not accept relative paths like `./data` for `-v` — hence `$(pwd)` / `${PWD}`.
+> Docker does not accept a relative path such as `./data` for `-v`. Use `$(pwd)` or `${PWD}`.
 
-The container fixes the permissions on `data/` at startup, so a folder created by root is
-not a problem.
+The container corrects the permissions of `data/` at start. A folder that root made is not
+a problem.
 
 ### PowerShell helpers
 
-Small wrappers for Windows are included: `_docker-build.ps1`, `_docker-run.ps1`,
-`_docker-stop.ps1`, `_docker-restart.ps1`, `_docker-logs.ps1`, `_docker-cleanup.ps1`.
+The repository contains small wrappers for Windows: `_docker-build.ps1`, `_docker-run.ps1`,
+`_docker-stop.ps1`, `_docker-restart.ps1`, `_docker-logs.ps1` and `_docker-cleanup.ps1`.
 
 ---
 
-## 🛡️ Security & privacy
+## 🛡️ Security and privacy
 
-pocketwatch collects nothing, sends nothing and loads nothing. No analytics, no fonts from
-Google, no external API — the container only ever talks to itself.
+pocketwatch does not collect data, does not send data and does not load external files.
+There is no analytics, there are no fonts from Google and there is no external API.
 
-> **Important:** the API deliberately has **no authentication** — pocketwatch is meant to
-> run on your own LAN. Do not expose the container to the open internet: whoever reaches
-> the URL can read and change every time entry. If you need access from outside, put a
-> reverse proxy with authentication or a VPN in front of it.
+> **Warning:** the API has **no authentication**. Use pocketwatch in your own LAN only. Do
+> not connect the container to the internet. A person who opens the URL can read and change
+> all time entries. For access from outside, put a reverse proxy with authentication or a
+> VPN in front of the container.
 
 ---
 
-## 💾 Data persistence
+## 💾 Data
 
-Everything lives in the mounted `data/` folder:
+All data is in the mounted `data/` folder:
 
-- `data/times.json` — all time entries
-- `data/config.json` — settings (name, language, time format, rounding …)
+- `data/times.json` - the time entries
+- `data/config.json` - the settings (name, language, time format, rounding)
 
-Writes go to a temporary file and are then renamed into place: an interrupted write cannot
-destroy a good file. As long as the folder is mounted on the host, your data survives every
-update and every container rebuild. `_docker-cleanup.ps1` deliberately leaves `data/` alone.
+The app writes to a temporary file and then renames it. An interrupted write cannot damage
+a good file. If the folder is mounted on the host, the data stays after an update and after
+a rebuild of the container. `_docker-cleanup.ps1` does not delete `data/`.
 
-For a backup, copying the `data/` folder is enough.
+To make a backup, copy the `data/` folder.
 
 ---
 
@@ -278,7 +266,7 @@ pocketwatch/
 │   ├── src/
 │   ├── public/
 │   │   ├── api/            # PHP API (read.php / write.php)
-│   │   ├── fonts/          # Instrument Sans / Space Mono (self-hosted)
+│   │   ├── fonts/          # Instrument Sans / Space Mono (in the repository)
 │   │   └── locales/        # de.json / en.json
 │   ├── scripts/            # demo-data.mjs, standalone.mjs
 │   ├── dist/               # build output (not in Git)
@@ -288,7 +276,7 @@ pocketwatch/
 │   ├── times.json          # time entries
 │   └── config.json         # settings
 │
-├── docs/                   # published via GitHub Pages
+├── docs/                   # published with GitHub Pages
 │   ├── index.html          # single-file demo (npm run standalone)
 │   └── *.png               # screenshots for this README
 │
@@ -302,7 +290,7 @@ pocketwatch/
 
 ## 🛠️ Local development
 
-Requires Node.js 20+.
+You need Node.js 20 or later.
 
 ```bash
 cd webapp
@@ -310,17 +298,17 @@ npm ci
 npm run dev
 ```
 
-Vite serves <http://localhost:5173> with hot reload. No container needed: Vite cannot run
-PHP, but `vite.config.ts` reimplements `api/read.php` and `api/write.php` for development
-and works on the same `data/` folder as the container. PHP remains authoritative in
-production.
+Vite serves <http://localhost:5173> with hot reload. You do not need a container. Vite
+cannot run PHP, but `vite.config.ts` supplies `api/read.php` and `api/write.php` for
+development. It uses the same `data/` folder as the container. In production, PHP is
+authoritative.
 
 More scripts:
 
 ```bash
 npm test         # tests for the time validation (node:test, no extra dependencies)
-npm run build    # typecheck (tsc) + production build into webapp/dist
-npm run demo-data -- --running   # demo data into data/ (--force overwrites, --en for English)
+npm run build    # typecheck (tsc) and production build into webapp/dist
+npm run demo-data -- --running   # demo data in data/ (--force overwrites, --en for English)
 npm run standalone               # single-file demo (see above)
 ```
 
@@ -344,14 +332,14 @@ jsPDF + jsPDF-AutoTable · PHP 8.4 (FPM) · Nginx · Alpine Linux
 
 ## ❤️ Support
 
-Please file issues and feature requests through GitHub Issues.
+Please report problems and feature requests with GitHub Issues.
 
 If pocketwatch saves you time, you can buy me a coffee:
-**[ko-fi.com/winnicodes](https://ko-fi.com/winnicodes)** — the same link sits at the bottom
-left inside the app.
+**[ko-fi.com/winnicodes](https://ko-fi.com/winnicodes)**. The same link is at the bottom
+left in the app.
 
 ---
 
 ## 📜 License
 
-MIT — see [LICENSE](LICENSE). Take it, use it, change it.
+MIT - see [LICENSE](LICENSE). You can use it and change it.

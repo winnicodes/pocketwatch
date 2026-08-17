@@ -1,4 +1,31 @@
 import { format } from 'date-fns/format';
+import { startOfDay } from 'date-fns/startOfDay';
+import { endOfDay } from 'date-fns/endOfDay';
+import { startOfWeek } from 'date-fns/startOfWeek';
+import { endOfWeek } from 'date-fns/endOfWeek';
+import { startOfMonth } from 'date-fns/startOfMonth';
+import { endOfMonth } from 'date-fns/endOfMonth';
+import { startOfYear } from 'date-fns/startOfYear';
+import { endOfYear } from 'date-fns/endOfYear';
+
+export type Period = 'day' | 'week' | 'month' | 'year' | 'all';
+
+/**
+ * Grenzen eines Standardzeitraums um den Bezugstag herum. null heisst "alle",
+ * also nicht einschraenken.
+ *
+ * Verlauf und Export fragen beide hier durch: sonst stuenden Wochenbeginn und
+ * Monatsende zweimal da, und eine abweichende Kopie exportierte einen anderen
+ * Zeitraum, als der Verlauf daneben anzeigt.
+ */
+export function periodBounds(period: Period, anchor: Date): { from: Date; to: Date } | null {
+  if (period === 'day') return { from: startOfDay(anchor), to: endOfDay(anchor) };
+  // Woche ab Montag - wie im Verlauf und in den Wochensummen.
+  if (period === 'week') return { from: startOfWeek(anchor, { weekStartsOn: 1 }), to: endOfWeek(anchor, { weekStartsOn: 1 }) };
+  if (period === 'month') return { from: startOfMonth(anchor), to: endOfMonth(anchor) };
+  if (period === 'year') return { from: startOfYear(anchor), to: endOfYear(anchor) };
+  return null;
+}
 
 /**
  * Kundenname beim Speichern normalisieren: aussen Leerzeichen weg, und wenn

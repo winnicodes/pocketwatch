@@ -4,13 +4,18 @@ import { useAppContext } from '../contexts/AppContext';
 import { X, ChevronLeft, FileText, Sheet, Check, Download } from 'lucide-react';
 import PickerBox from './PickerBox';
 import Segmented from './Segmented';
+import PeriodFilter from './PeriodFilter';
 import { CARD_BUTTON, SECTION_LABEL, PRIMARY_BUTTON, MODAL_BACKDROP } from '../ui';
 import ToggleRow from './SettingRow';
 import { useEscape } from '../hooks/useEscape';
+import type { Period } from '../entryTimes';
 
 export interface ExportOptions {
     format: 'pdf' | 'csv';
-    type: 'dateRange' | 'currentView';
+    type: 'dateRange' | 'currentView' | 'period';
+    /** Nur bei type 'period': welcher Standardfilter und um welchen Tag herum. */
+    period?: Period;
+    anchor?: number;
     startDate?: string;
     endDate?: string;
     timesOnly: boolean;
@@ -30,7 +35,10 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
     const { t } = useAppContext();
     const today = format(new Date(), 'yyyy-MM-dd');
     const [fileFormat, setFileFormat] = useState<'pdf' | 'csv'>('pdf');
-    const [exportType, setExportType] = useState<'dateRange' | 'currentView'>('currentView');
+    const [exportType, setExportType] = useState<ExportOptions['type']>('currentView');
+    // Wie im Verlauf: 'all' ist der Ausgangspunkt, hier heisst das "alles exportieren".
+    const [period, setPeriod] = useState<Period>('all');
+    const [anchor, setAnchor] = useState<Date>(new Date());
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(today);
     const [timesOnly, setTimesOnly] = useState(false);
@@ -50,12 +58,15 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
                 return;
             }
             onExport({ format: fileFormat, type: 'dateRange', startDate, endDate, timesOnly, showCreatedAt, sortDesc });
+        } else if (exportType === 'period') {
+            onExport({ format: fileFormat, type: 'period', period, anchor: anchor.getTime(), timesOnly, showCreatedAt, sortDesc });
         } else {
             onExport({ format: fileFormat, type: 'currentView', timesOnly, showCreatedAt, sortDesc });
         }
     };
 
     const isRange = exportType === 'dateRange';
+    const isPeriod = exportType === 'period';
     const isPdf = fileFormat === 'pdf';
 
     // Die Beschreibung steht nur noch im title: sichtbar bleibt das Format, wer
@@ -157,19 +168,47 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
                                 onChange={setExportType}
                                 options={[
                                     { value: 'currentView', label: t('exportCurrentView') },
+                                    { value: 'period', label: t('exportStandardFilter') },
                                     { value: 'dateRange', label: t('exportDateRange') },
                                 ]}
                             />
-                            {/* Ohne eigenen Zeitraum gibt es nichts einzustellen. Am Desktop
-                                bleibt der Platz dafuer trotzdem stehen (invisible statt
+                            {/* Ein Platz fuer beide Einstellungen: der eigene Zeitraum zeigt
+                                hier zwei Datumsfelder, der Standardfilter seine Pillen.
+                                Bei "Aktuelle Ansicht" gibt es nichts einzustellen, am
+                                Desktop bleibt der Platz aber stehen (invisible statt
                                 ausgebaut): der Dialog steht mittig, jede Hoehenaenderung
                                 ruckt sonst den ganzen Inhalt. visibility:hidden nimmt die
                                 Felder aus Tastatur und Screenreader, das Feld ist also
-                                wirklich weg, nur der Platz bleibt. Mobil stapeln die
-                                Spalten - dort waeren die reservierten 70px verschenkt. */}
-                            <div className={`flex flex-wrap gap-3 mt-[3px] ${isRange ? '' : 'invisible max-lg:hidden'}`}>
-                                {dateBox('exportFrom', startDate, setStartDate)}
-                                {dateBox('exportTo', endDate, setEndDate)}
+                                wirklich weg, nur der Platz bleibt. Die Mindesthoehe ist die
+                                des hoechsten Falls: Pillen plus Blaetterkasten, gemessen 98px.
+                                Die Datumsfelder brauchen 71, die Pillen allein 42 - ohne
+                                Reservierung sprang der mittig stehende Dialog bei jedem
+                                Wechsel. Die Zahl ist gemessen, nicht gerechnet: eine
+                                Aenderung an Segmented oder am Abstand darunter verschiebt sie,
+                                dann hier neu messen statt schaetzen. Mobil stapeln die
+                                Spalten - dort waere der reservierte Platz verschenkt. */}
+                            <div className={`mt-[3px] lg:min-h-[98px] ${isRange || isPeriod ? '' : 'invisible max-lg:hidden'}`}>
+                                {isPeriod ? (
+                                    // items-start: die Schienen sind so breit wie ihre Knoepfe,
+                                    // nicht wie die Spalte - wie die Auswahl darueber.
+                                    // gap-3.5 sind 14px: die 11px Spaltenabstand plus die 3px
+                                    // Versatz des Platzhalters. So steht der Blaetterkasten
+                                    // genauso weit unter den Pillen wie die Pillen unter der
+                                    // Auswahl darueber.
+                                    <div className="flex flex-col items-start gap-3.5">
+                                        <PeriodFilter
+                                            period={period}
+                                            onPeriodChange={setPeriod}
+                                            anchor={anchor}
+                                            onAnchorChange={setAnchor}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-wrap gap-3">
+                                        {dateBox('exportFrom', startDate, setStartDate)}
+                                        {dateBox('exportTo', endDate, setEndDate)}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

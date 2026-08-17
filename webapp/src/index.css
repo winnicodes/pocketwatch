@@ -191,6 +191,18 @@
   color: var(--color-on-primary);
   font-weight: 700;
 }
+/* Ganzer Zeitraum beim Wochenfilter. Steht bewusst nach .rdp-outside und
+   .rdp-today: gleiche Spezifitaet, die spaetere Regel gewinnt - sonst faerbte
+   ein Tag aus dem Nachbarmonat oder der heutige Tag aus der Markierung heraus. */
+.pw-calendar .pw-range .rdp-day_button {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 700;
+}
+/* Die Blende fuer Nachbarmonatstage haengt an der Zelle, nicht am Knopf - ein
+   opacity:1 weiter innen kaeme dagegen nicht an. Eine Woche ueber den
+   Monatswechsel sah sonst am Rand ausgeblichen aus. */
+.pw-calendar .pw-range { opacity: 1; }
 /* Der Tastaturfokus soll amber sein, nicht das Browser-Blau. */
 .pw-calendar .rdp-day_button:focus-visible {
   outline: 2px solid var(--color-primary);

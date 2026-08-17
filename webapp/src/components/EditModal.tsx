@@ -69,6 +69,11 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
 
   const setField = (name: string) => (v: string) => setFormData(prev => ({ ...prev, [name]: v }));
 
+  // Ein laufender Eintrag hat noch keine Dauer - dann faellt die obere Zelle der
+  // rechten Spalte weg und die Zeiten ruecken hoch, statt eine leere Flaeche
+  // ueber sich stehen zu lassen.
+  const hasDuration = entry.end !== null;
+
   // Ein Layout fuer beide Breiten: mobil untereinander, ab lg zweispaltig.
   // Vorher standen hier zwei vollstaendige Baeume gleichzeitig im DOM - jedes
   // Feld doppelt, jede Beschriftung doppelt, und deshalb aria-label statt
@@ -139,7 +144,21 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
         {/* flex-none an beiden Spalten: mobil scrollt das Formular, und was
             scrollt, darf nicht schrumpfen. Im Grid ab lg ist flex-none wirkungslos. */}
         <form id="edit-entry" onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto flex flex-col lg:overflow-visible lg:grid lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="flex-none flex flex-col gap-[22px] px-5 pt-1 pb-5 lg:px-[30px] lg:pt-[26px] lg:pb-[30px]">
+          {/* Dauer: mobil die Schlagzeile ganz oben, am Desktop der Kopf der
+              rechten Spalte. */}
+          {hasDuration && (
+            <div className="flex-none flex flex-col gap-5 border-divider lg:col-start-2 lg:row-start-1 lg:border-l lg:bg-darker px-5 pt-1 pb-5 lg:px-[26px] lg:pt-[26px]">
+              <div className="flex flex-col gap-1.5">
+                <span className={SECTION_LABEL}>{t('thDuration')}</span>
+                <span className="font-mono tnum text-[44px] font-bold text-primary tracking-[-0.03em] leading-none">
+                  {formatDuration(entryDuration(entry, settings))}
+                </span>
+              </div>
+              <span className="h-px bg-divider block" />
+            </div>
+          )}
+
+          <div className="flex-none flex flex-col gap-[22px] lg:col-start-1 lg:row-start-1 lg:row-span-2 px-5 pt-1 pb-5 lg:px-[30px] lg:pt-[26px] lg:pb-[30px]">
             <div className="flex flex-col gap-2">
               <span className={SECTION_LABEL}>{t('client')}</span>
               <ClientInput
@@ -157,7 +176,10 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
                 name="activity"
                 value={formData.activity}
                 onChange={handleChange}
-                rows={5}
+                // Greift nur mobil: dort ist der Block so hoch wie sein Inhalt, und
+                // fuenf Zeilen standen bei einer Zeile Text fast leer da. Am Desktop
+                // zieht flex-1 das Feld ohnehin auf die Hoehe der Spalte.
+                rows={3}
                 aria-label={t('activity')}
                 placeholder={t('activityPlaceholder')}
                 className="flex-1 px-4 py-[14px] rounded-[13px] border border-border-color bg-card text-base text-light leading-[1.55] resize-none outline-none focus:border-primary transition-colors"
@@ -165,22 +187,14 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
             </div>
           </div>
 
-          {/* Dauer und Zeiten: am Desktop die rechte Spalte, mobil nach oben -
-              die Dauer ist dort die Schlagzeile des Eintrags. Die Reihenfolge
-              muss im Quelltext die des Grids bleiben, sonst landet dieser
-              Block ab lg in der linken Spalte. */}
-          <div className="order-first lg:order-0 flex-none flex flex-col gap-5 lg:border-l border-divider lg:bg-darker px-5 pt-1 pb-5 lg:px-[26px] lg:pt-[26px] lg:pb-[30px]">
-            {entry.end !== null && (
-              <>
-                <div className="flex flex-col gap-1.5">
-                  <span className={SECTION_LABEL}>{t('thDuration')}</span>
-                  <span className="font-mono tnum text-[44px] font-bold text-primary tracking-[-0.03em] leading-none">
-                    {formatDuration(entryDuration(entry, settings))}
-                  </span>
-                </div>
-                <span className="h-px bg-divider block" />
-              </>
-            )}
+          {/* Start und Ende: mobil zuunterst, am Desktop die untere Haelfte der
+              rechten Spalte. Beide Zellen tragen Rand und Hintergrund selbst,
+              nebeneinanderliegende Gitterzeilen ergeben daraus eine durchgehende
+              Flaeche. Ohne Dauer darueber uebernimmt dieser Block deren Zeile
+              samt oberem Innenabstand. */}
+          <div className={`flex-none flex flex-col gap-5 border-divider lg:col-start-2 lg:border-l lg:bg-darker px-5 pt-1 pb-5 lg:px-[26px] lg:pb-[30px] ${
+            hasDuration ? 'lg:row-start-2 lg:pt-0' : 'lg:row-start-1 lg:row-span-2 lg:pt-[26px]'
+          }`}>
             {timeRow(t('start'), 'startDate', 'startTime')}
             {timeRow(t('end'), 'endDate', 'endTime')}
           </div>

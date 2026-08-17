@@ -14,7 +14,7 @@ import { SECTION_LABEL } from '../ui';
 const ROW = 'flex items-center gap-4 px-[18px] py-[15px]';
 const GROUP = 'bg-card border border-border-color rounded-[16px] overflow-hidden divide-y divide-divider';
 
-type ToggleKey = 'showWeekTotal' | 'stickyDayHeaders' | 'rounding' | 'roundUp' | 'longRunReminder';
+type ToggleKey = 'stickyDayHeaders' | 'rounding' | 'roundUp' | 'longRunReminder';
 
 const SettingsFields: React.FC = () => {
   const { settings, setSettings, t } = useAppContext();
@@ -112,7 +112,6 @@ const SettingsFields: React.FC = () => {
             />
           </div>
 
-          {toggleRow('showWeekTotal', t('settingsShowWeekTotal'), t('settingsShowWeekTotalHint'), settings.showWeekTotal)}
           {toggleRow('stickyDayHeaders', t('settingsStickyDayHeaders'), t('settingsStickyDayHeadersHint'), settings.stickyDayHeaders)}
         </div>
       </div>

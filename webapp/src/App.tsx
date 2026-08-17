@@ -39,6 +39,17 @@ const AppContent: React.FC = () => {
   // Export sitzt laut Design in der Kopfzeile, die Filterung dafür liegt in TimeTable.
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
+  // Lese- und Schreibfehler melden sich aus den Hooks und aus persist per
+  // Ereignis. Einmal gesetzt bleibt der Hinweis stehen: sobald irgendetwas nicht
+  // gespeichert wurde, ist der Stand im Browser nicht mehr der auf der Platte,
+  // und das aendert sich erst durch ein Neuladen.
+  const [hasStorageError, setHasStorageError] = useState(false);
+  useEffect(() => {
+    const onStorageError = () => setHasStorageError(true);
+    window.addEventListener('pw-storage-error', onStorageError);
+    return () => window.removeEventListener('pw-storage-error', onStorageError);
+  }, []);
+
   useEffect(() => {
     const runningEntry = timeEntries.find(e => e.end === null);
     if (runningEntry) {
@@ -142,22 +153,20 @@ const AppContent: React.FC = () => {
   // beide nebeneinander im Grid.
   const paneVisibility = (owner: Tab) => `${tab === owner ? 'flex' : 'hidden'} lg:flex`;
 
-
-  const weekBadge = settings.showWeekTotal ? (
-    <div className="flex flex-col items-end gap-px flex-none">
-      <span className="text-xl font-mono tnum font-bold text-light">{totals.week}</span>
-      <span className="text-xs text-muted">{t('thisWeekBadge')}</span>
-    </div>
-  ) : null;
-
   return (
     // Eine App-Fläche über die volle Höhe: Kopfzeile (Desktop) bzw. Tab-Leiste
     // (Mobil) stehen fest, dazwischen scrollt der jeweilige Bereich für sich.
     // Das Safe-Area-Polster unten hing bisher an der Tab-Leiste. Ohne sie muss
     // es hierher, sonst laeuft die Summenzeile unter den Home-Indicator.
     <div className="h-dvh overflow-hidden flex flex-col bg-darker text-light font-sans pb-[env(safe-area-inset-bottom,0px)] lg:pb-0">
+      {/* Danger auf Card statt weiss auf Rot: die dunkle Variante traegt den
+          Kontrast fuer Fliesstext, die helle nicht. */}
+      {hasStorageError && (
+        <div role="alert" className="flex-none bg-card text-danger border-b border-divider px-5 py-2.5 text-sm text-center">
+          {t('storageError')}
+        </div>
+      )}
       <Header
-        weekTotal={settings.showWeekTotal ? totals.week : null}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
         onOpenExport={() => setIsExportModalOpen(true)}
       />
@@ -173,12 +182,9 @@ const AppContent: React.FC = () => {
           {/* Gleicher Aufbau wie die Ueberschriften von Verlauf und Einstellungen:
               Menueknopf, Titel. Das Datum sitzt jetzt in der Karte, wo es zum
               Zustand gehoert, statt als Zeile ueber dem Titel zu schweben. */}
-          <div className="lg:hidden flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <MenuButton onClick={() => setIsMenuOpen(true)} />
-              <span className="min-w-0 truncate text-[28px] font-semibold text-light tracking-[-0.02em]">{t('navTrack')}</span>
-            </div>
-            {weekBadge}
+          <div className="lg:hidden flex items-center gap-2.5 min-w-0">
+            <MenuButton onClick={() => setIsMenuOpen(true)} />
+            <span className="min-w-0 truncate text-[28px] font-semibold text-light tracking-[-0.02em]">{t('navTrack')}</span>
           </div>
           <TimeTracker
             isTracking={isTracking}

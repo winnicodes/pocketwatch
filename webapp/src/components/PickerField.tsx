@@ -24,6 +24,12 @@ interface PickerFieldProps {
   ariaLabel?: string;
   /** Ueberschreibt die Beschriftung des Ausloesers, z.B. fuer Zeitraeume. */
   label?: string;
+  /**
+   * Hebt einen ganzen Zeitraum im Kalender hervor statt nur des einen Tages.
+   * Beim Wochenfilter ist der gespeicherte Tag nur der Bezugspunkt - gefiltert
+   * wird die ganze Woche, und genau die soll der Kalender auch zeigen.
+   */
+  highlight?: { from: Date; to: Date };
 }
 
 const PATTERN: Record<Mode, string> = { date: 'yyyy-MM-dd', month: 'yyyy-MM', time: 'HH:mm' };
@@ -37,7 +43,7 @@ const NAV = 'w-8 h-8 rounded-[10px] flex items-center justify-center text-muted 
  * Schrift kommen dort vom Betriebssystem statt aus dem Design.
  */
 const PickerField: React.FC<PickerFieldProps> = ({
-  mode, value, onChange, className = '', align = 'left', placeholder, ariaLabel, label: labelOverride,
+  mode, value, onChange, className = '', align = 'left', placeholder, ariaLabel, label: labelOverride, highlight,
 }) => {
   const { t, locale, settings } = useAppContext();
 
@@ -131,6 +137,11 @@ const PickerField: React.FC<PickerFieldProps> = ({
       showOutsideDays
       autoFocus
       className="pw-calendar"
+      // Eigener Modifier statt "mode=range": ausgewaehlt wird weiterhin ein
+      // einzelner Tag, der Zeitraum ist nur Anzeige. Ein Bereichsmodus wollte
+      // zwei Klicks und gaebe einen Zustand her, den der Filter nicht kennt.
+      modifiers={highlight ? { pwRange: highlight } : undefined}
+      modifiersClassNames={{ pwRange: 'pw-range' }}
       footer={
         <button
           type="button"

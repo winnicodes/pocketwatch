@@ -2,31 +2,19 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import type { TimeEntry } from '../types';
 // Fix: Import date-fns functions from their specific submodules to resolve export errors.
 import { format } from 'date-fns/format';
-import { startOfWeek } from 'date-fns/startOfWeek';
-import { endOfWeek } from 'date-fns/endOfWeek';
-import { startOfMonth } from 'date-fns/startOfMonth';
-import { endOfMonth } from 'date-fns/endOfMonth';
 import { startOfDay } from 'date-fns/startOfDay';
 import { endOfDay } from 'date-fns/endOfDay';
-import { addDays } from 'date-fns/addDays';
-import { addWeeks } from 'date-fns/addWeeks';
-import { addMonths } from 'date-fns/addMonths';
-import { startOfYear } from 'date-fns/startOfYear';
-import { endOfYear } from 'date-fns/endOfYear';
-import { addYears } from 'date-fns/addYears';
-import { isToday } from 'date-fns/isToday';
 import { parseISO } from 'date-fns/parseISO';
-import { parse } from 'date-fns/parse';
 import { exportToPdf } from '../services/pdfService';
 import { exportToCsv } from '../services/csvService';
 import { useAppContext } from '../contexts/AppContext';
-import { formatDuration, entryDuration, formatClock } from '../entryTimes';
+import { formatDuration, entryDuration, formatClock, periodBounds } from '../entryTimes';
+import type { Period } from '../entryTimes';
 import ExportModal from './ExportModal';
 import type { ExportOptions } from './ExportModal';
-import PickerField from './PickerField';
-import Segmented from './Segmented';
+import PeriodFilter from './PeriodFilter';
 import { SECTION_LABEL, CARD_BUTTON } from '../ui';
-import { Search, ChevronLeft, ChevronRight, X, SlidersHorizontal, Download } from 'lucide-react';
+import { Search, X, SlidersHorizontal, Download } from 'lucide-react';
 
 interface TimeTableProps {
   entries: TimeEntry[];
@@ -42,7 +30,6 @@ interface TimeTableProps {
   menuButton?: React.ReactNode;
 }
 
-type Period = 'day' | 'week' | 'month' | 'year' | 'all';
 
 // Ein Raster fuer Spaltenkopf und Zeilen, sonst laufen die Spalten auseinander.
 // Mobil: Zeitstrahl | Text | Dauer, ab lg das 5-spaltige Raster der Vorlage.
@@ -155,13 +142,7 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
   // zeigt der gefaerbte Knopf; leergeraeumt wird ueber das Kreuz im Feld.
   const toggleSearch = () => setIsSearchOpen(open => !open);
 
-  const bounds = useMemo(() => {
-    if (period === 'day') return { from: startOfDay(anchor), to: endOfDay(anchor) };
-    if (period === 'week') return { from: startOfWeek(anchor, { weekStartsOn: 1 }), to: endOfWeek(anchor, { weekStartsOn: 1 }) };
-    if (period === 'month') return { from: startOfMonth(anchor), to: endOfMonth(anchor) };
-    if (period === 'year') return { from: startOfYear(anchor), to: endOfYear(anchor) };
-    return null;
-  }, [period, anchor]);
+  const bounds = useMemo(() => periodBounds(period, anchor), [period, anchor]);
 
   const filteredEntries = useMemo(() => {
     const needle = searchTerm.toLowerCase();
@@ -176,25 +157,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
       })
       .sort((a, b) => b.start - a.start);
   }, [entries, searchTerm, bounds]);
-
-  const step = (direction: 1 | -1) => {
-    if (period === 'day') setAnchor(addDays(anchor, direction));
-    else if (period === 'week') setAnchor(addWeeks(anchor, direction));
-    else if (period === 'month') setAnchor(addMonths(anchor, direction));
-    else if (period === 'year') setAnchor(addYears(anchor, direction));
-  };
-
-  const periodLabel = () => {
-    if (period === 'day') {
-      return isToday(anchor) ? t('today') : format(anchor, 'EEE, dd.MM.yyyy', { locale });
-    }
-    if (period === 'week') {
-      const { from, to } = bounds!;
-      return `${format(from, 'dd.MM.')} – ${format(to, 'dd.MM.yyyy')}`;
-    }
-    if (period === 'year') return format(anchor, 'yyyy');
-    return format(anchor, 'LLLL yyyy', { locale });
-  };
 
   // Nur diese Zeilen stehen im DOM - Summen und Export nutzen weiter die
   // vollstaendige Liste.
@@ -228,12 +190,20 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
   );
 
   const handleExport = (exportOptions: ExportOptions) => {
-    const { format: fileFormat, type, startDate: start, endDate: end, timesOnly, showCreatedAt, sortDesc } = exportOptions;
+    const { format: fileFormat, type, period: exportPeriod, anchor: exportAnchor, startDate: start, endDate: end, timesOnly, showCreatedAt, sortDesc } = exportOptions;
 
     let entriesToExport: TimeEntry[];
 
     if (type === 'currentView') {
       entriesToExport = [...filteredEntries];
+    } else if (type === 'period') {
+      // Bezugspunkt ist immer heute - der Dialog blaettert nicht, dafuer gibt es
+      // den eigenen Zeitraum daneben. Ohne Grenzen ("Alle") geht alles raus,
+      // ungefiltert von Suche und Zeitraum des Verlaufs.
+      const range = periodBounds(exportPeriod ?? 'all', exportAnchor ? new Date(exportAnchor) : new Date());
+      entriesToExport = range
+        ? entries.filter(e => e.start >= range.from.getTime() && e.start <= range.to.getTime())
+        : [...entries];
     } else {
       if (!start || !end) {
           onCloseExport();
@@ -264,13 +234,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
     setExpandedActivities(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const tabs: { value: Period; label: string }[] = [
-    { value: 'all', label: t('tabAll') },
-    { value: 'day', label: t('tabDay') },
-    { value: 'week', label: t('tabWeek') },
-    { value: 'month', label: t('tabMonth') },
-    { value: 'year', label: t('tabYear') },
-  ];
 
   return (
     <>
@@ -346,61 +309,14 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
           )}
         </div>
 
-        {/* Mobil einzelne Pillen wie in der Vorlage, ab lg der Segmented Control.
-            Unter lg nur sichtbar, wenn der Filterknopf sie aufgeklappt hat. */}
-        <Segmented
-          pills
-          className={`${isFilterOpen ? '' : 'max-lg:hidden'} lg:bg-card`}
-          ariaLabel={t('period')}
-          value={period}
-          onChange={setPeriod}
-          options={tabs}
+        {/* Unter lg nur sichtbar, wenn der Filterknopf sie aufgeklappt hat. */}
+        <PeriodFilter
+          period={period}
+          onPeriodChange={setPeriod}
+          anchor={anchor}
+          onAnchorChange={setAnchor}
+          railClassName={isFilterOpen ? '' : 'max-lg:hidden'}
         />
-
-        {/* Zeitraum blaettern oder direkt anspringen; "Alle" braucht das nicht. */}
-        {period !== 'all' && (
-          <div className="flex items-center gap-1 p-1 bg-card border border-border-color rounded-[13px]">
-            <button
-              type="button"
-              onClick={() => step(-1)}
-              aria-label={t('previous')}
-              className="w-8 h-8 rounded-[9px] flex items-center justify-center text-muted hover:text-light hover:bg-elevated"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            {/* Jahre nur ueber die Pfeile: ein Panel dafuer waere ein Raster aus
-                Jahreszahlen, und die paar Jahre eines Zeitkontos sind mit ein,
-                zwei Klicks erreicht. Lieber gar kein Knopf als ein toter. */}
-            {period === 'year' ? (
-              // flex-1 nur mobil: dort ist der Kasten so breit wie die Spalte und
-              // die Beschriftung klebte sonst links am Pfeil. Ab lg ist er so
-              // breit wie sein Inhalt, da gibt es nichts zu verteilen.
-              <span className="flex-1 lg:flex-none h-8 px-3 flex items-center justify-center text-sm font-semibold text-light whitespace-nowrap">
-                {periodLabel()}
-              </span>
-            ) : (
-              <PickerField
-                mode={period === 'month' ? 'month' : 'date'}
-                align="right"
-                // Nicht t('month'): der Monat-Tab heisst schon so, zwei Bedienelemente
-                // duerfen nicht denselben Namen tragen.
-                ariaLabel={t('period')}
-                label={periodLabel()}
-                value={format(anchor, period === 'month' ? 'yyyy-MM' : 'yyyy-MM-dd')}
-                onChange={(v) => setAnchor(parse(v, period === 'month' ? 'yyyy-MM' : 'yyyy-MM-dd', new Date()))}
-                className="flex-1 lg:flex-none h-8 px-3 rounded-[9px] text-sm font-semibold text-light text-center whitespace-nowrap hover:bg-elevated"
-              />
-            )}
-            <button
-              type="button"
-              onClick={() => step(1)}
-              aria-label={t('next')}
-              className="w-8 h-8 rounded-[9px] flex items-center justify-center text-muted hover:text-light hover:bg-elevated"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto lg:border-l border-divider px-5 lg:px-7 pb-6">

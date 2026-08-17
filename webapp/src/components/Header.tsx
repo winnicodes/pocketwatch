@@ -6,10 +6,9 @@ import { CARD_BUTTON } from '../ui';
 interface HeaderProps {
     onOpenSettings: () => void;
     onOpenExport: () => void;
-    weekTotal: string | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenExport, weekTotal }) => {
+const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenExport }) => {
   const { t } = useAppContext();
   return (
     // Mobil trägt jeder Tab seine eigene Überschrift, die Leiste gibt es erst ab lg.
@@ -20,15 +19,6 @@ const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenExport, weekTotal
       </div>
 
       <div className="flex items-center gap-3.5">
-        {weekTotal !== null && (
-          <>
-            <div className="flex items-baseline gap-2">
-              <span className="text-sm text-muted">{t('filterThisWeek')}</span>
-              <span className="text-base font-mono tnum font-bold text-light">{weekTotal}</span>
-            </div>
-            <span className="w-px h-6 bg-border-color" />
-          </>
-        )}
         <button
           onClick={onOpenExport}
           className={`h-[38px] px-3.5 rounded-[12px] flex items-center gap-2 text-sm ${CARD_BUTTON}`}

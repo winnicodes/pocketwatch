@@ -28,10 +28,12 @@ if (!in_array($file, $allowed, true)) {
     exit;
 }
 
-// Kaputter Body darf eine gute Datei nicht leeren.
-if ($content === null) {
+// Kaputter Body darf eine gute Datei nicht leeren. Der Typ wird mitgeprueft:
+// ein Skalar waere gueltiges JSON, aber times.json enthaelt danach einen String,
+// den der Client beim naechsten Lesen als "leer" liest.
+if (!is_array($content)) {
     http_response_code(400);
-    echo json_encode(["error" => "Missing data"]);
+    echo json_encode(["error" => "Missing or malformed data"]);
     exit;
 }
 
@@ -42,9 +44,22 @@ if (!is_dir($dir)) {
     @mkdir($dir, 0775, true);
 }
 
+// Ungueltiges UTF-8 laesst json_encode false zurueckgeben. file_put_contents
+// schriebe daraus einen leeren String und meldete 0 statt false - die alte
+// Datei waere weg, die Antwort trotzdem "success".
+$json = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+if ($json === false) {
+    http_response_code(400);
+    echo json_encode(["error" => "Data is not encodable as JSON"]);
+    exit;
+}
+
 // Temp + rename: ein Absturz mitten im Schreiben darf die alte Datei nicht zerstoeren.
-$tmp = $path . '.tmp';
-if (file_put_contents($tmp, json_encode($content, JSON_PRETTY_PRINT)) === false || !rename($tmp, $path)) {
+// Der Temp-Pfad haengt an der Prozess-ID: bei einem gemeinsamen schreiben zwei
+// parallele php-fpm-Worker ineinander, und das Ergebnis wird sauber atomar an
+// die richtige Stelle geschoben.
+$tmp = $path . '.' . getmypid() . '.tmp';
+if (file_put_contents($tmp, $json) === false || !rename($tmp, $path)) {
     @unlink($tmp);
     http_response_code(500);
     echo json_encode(["error" => "Write failed - check permissions on the data directory"]);
