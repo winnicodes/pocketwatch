@@ -44,8 +44,6 @@ export. The demo does not save data. If you reload the page, the demo starts aga
 
 ## 🎬 Functions
 
-<img src="docs/desktop-idle.png" alt="The Track view with the client list and the Clock In button">
-
 ### ⏱️ Track
 
 - 📇 Client list, most recent first
@@ -54,11 +52,7 @@ export. The demo does not save data. If you reload the page, the demo starts aga
 - 📊 Totals for today and this week
 - ⚠️ Notice after 8 hours
 
-If you do not enter a client, the entry gets the name “No client”.
-
----
-
-<img src="docs/desktop-search.png" alt="The history filtered by a search for Gutenberg">
+<img src="docs/desktop-idle.png" alt="The Track view with the client list and the Clock In button">
 
 ### 📜 History
 
@@ -68,18 +62,14 @@ If you do not enter a client, the entry gets the name “No client”.
 - ➕ Long text expands with **more**
 - Σ Total of the selection in the footer
 
----
-
-<img src="docs/desktop-period.png" alt="The history filtered to the current week with the period selector">
+<img src="docs/desktop-search.png" alt="The history filtered by a search for Gutenberg">
 
 ### 🗓️ Period
 
 Select **Day**, **Week**, **Month** or **Year**. Use the arrows to go to an earlier or a later
 period. The total changes with the period. Select **All** to show the full history.
 
----
-
-<img src="docs/desktop-edit.png" alt="The Edit Entry dialog with date, time and duration">
+<img src="docs/desktop-period.png" alt="The history filtered to the current week with the period selector">
 
 ### ✏️ Edit
 
@@ -89,9 +79,7 @@ period. The total changes with the period. Select **All** to show the full histo
 - 🚫 The app rejects an end before the start
 - ❓ Delete asks first
 
----
-
-<img src="docs/desktop-export.png" alt="The Export dialog with the PDF and CSV cards and the period selector">
+<img src="docs/desktop-edit.png" alt="The Edit Entry dialog with date, time and duration">
 
 ### 📤 Export
 
@@ -101,11 +89,7 @@ period. The total changes with the period. Select **All** to show the full histo
 - 🔀 Newest first
 - ✂️ Times only, without activities
 
-The dialog shows the number of entries and the total hours before you export.
-
----
-
-<img src="docs/desktop-settings.png" alt="Settings with rounding switched on and the interval control">
+<img src="docs/desktop-export.png" alt="The Export dialog with the PDF and CSV cards and the period selector">
 
 ### ⚙️ Settings
 
@@ -116,8 +100,7 @@ The dialog shows the number of entries and the total hours before you export.
 - ⚠️ Reminder for a long timer
 - 🔢 **Round times** to an interval from 1 to 60 minutes, up or to the nearest interval
 
-The settings show an example of the rounding. Rounding applies to the history, the totals,
-the PDF and the CSV.
+<img src="docs/desktop-settings.png" alt="Settings with rounding switched on and the interval control">
 
 ---
 
