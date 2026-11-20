@@ -1,6 +1,6 @@
 <?php
-// Same-origin only: keine CORS-Header, sonst kann jede fremde Seite die Zeitdaten auslesen.
 header("Content-Type: application/json");
+// No CORS headers: same-origin only.
 
 $file = $_GET['file'] ?? '';
 

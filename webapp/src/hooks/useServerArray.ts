@@ -3,14 +3,7 @@ import { save, reportStorageError } from "./persist";
 
 export function useServerArray<T>(file: string) {
   const [data, setData] = useState<T[]>([]);
-  // Leer und "noch nicht geladen" sehen im Datensatz gleich aus. Ohne diese
-  // Unterscheidung behauptet der Verlauf waehrend des Abrufs, es gebe keine
-  // Eintraege - bei einer grossen times.json sekundenlang.
   const [loading, setLoading] = useState(true);
-  // ... und "leer" und "Lesen fehlgeschlagen" sehen ebenfalls gleich aus. Ohne
-  // diese Sperre zeigt die App nach einem 502 (php-fpm startet noch) oder einem
-  // Rechtefehler auf data/ einen leeren Verlauf, und der erste Klick auf Clock In
-  // schreibt genau einen Eintrag ueber alle bestehenden.
   const failed = useRef(false);
 
   useEffect(() => {
@@ -31,7 +24,7 @@ export function useServerArray<T>(file: string) {
 
   const update = useCallback(
     (updater: T[] | ((prev: T[]) => T[])) => {
-      // Nie ueber Daten schreiben, die nie gelesen werden konnten.
+      // Never overwrite data that failed to load.
       if (failed.current) return;
 
       setData(prev => {

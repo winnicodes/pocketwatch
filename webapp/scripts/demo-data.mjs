@@ -1,15 +1,3 @@
-// Erzeugt Demodaten zum Testen: node scripts/demo-data.mjs [Optionen]
-//
-//   --weeks <n>    Zeitraum rueckwaerts in Wochen (Standard 8)
-//   --running      zusaetzlich einen laufenden Eintrag (end: null)
-//   --en           englische Kunden und Taetigkeiten (fuer die englische Demo)
-//   --out <pfad>   Zielverzeichnis (Standard <repo>/data, das Volume aus docker-compose)
-//   --force        vorhandene times.json ueberschreiben
-//   --stdout       nichts schreiben, JSON nur ausgeben
-//
-// Schreibt ausschliesslich times.json - config.json bleibt unangetastet,
-// damit Name, Sprache und Zeitformat erhalten bleiben.
-
 import { writeFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,11 +12,8 @@ const opt = (name, fallback) => {
 };
 
 const WEEKS = Number(opt('--weeks', 8));
-// docker-compose mountet <repo>/data nach /var/www/html/data - dort liest read.php.
 const OUT_DIR = resolve(opt('--out', join(HERE, '..', '..', 'data')));
 
-// Fester Startwert: gleiche Eingabe, gleiche Daten - sonst sieht ein Testlauf
-// jedes Mal anders aus und Vergleiche werden wertlos.
 let seed = 20260806;
 const rnd = () => {
   seed = (seed + 0x6d2b79f5) >>> 0;
@@ -66,13 +51,9 @@ const WORK = [
     'Aufmaß vor Ort',
     'Angebot kalkuliert',
   ]],
-  // So legt die App einen Eintrag ohne Kundennamen ab (siehe clientOrFallback).
   ['Ohne Kunde', ['Verwaltung, Ablage', 'Buchhaltung vorbereitet']],
 ];
 
-// Dieselben Rollen auf Englisch - die englische Demo soll nicht deutsche
-// Kundennamen in einer englischen Oberflaeche zeigen. "No client" muss zum
-// clientFallback aus locales/en.json passen.
 const WORK_EN = [
   ['Gutenberg Press', [
     'Cover proofing, sign-off on the inside pages',
@@ -102,7 +83,6 @@ const WORK_EN = [
   ['No client', ['Admin, filing', 'Bookkeeping prepared']],
 ];
 
-// Eine Quelle fuer beide Sprachen - der Rest des Skripts kennt nur JOBS.
 const JOBS = flag('--en') ? WORK_EN : WORK;
 
 const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
@@ -116,10 +96,9 @@ for (let back = WEEKS * 7; back >= 0; back--) {
   day.setDate(day.getDate() - back);
   const weekday = day.getDay();
 
-  // Wochenenden meist frei, ein paar Ausnahmen fuer Randfaelle.
   const isWeekend = weekday === 0 || weekday === 6;
   if (isWeekend && rnd() > 0.15) continue;
-  if (!isWeekend && rnd() > 0.85) continue; // vereinzelte freie Tage
+  if (!isWeekend && rnd() > 0.85) continue;
 
   let cursor = new Date(day);
   cursor.setHours(between(7, 9), pick([0, 15, 30, 45]), 0, 0);
@@ -127,13 +106,12 @@ for (let back = WEEKS * 7; back >= 0; back--) {
   const count = isWeekend ? 1 : between(1, 4);
   for (let i = 0; i < count; i++) {
     const [client, activities] = pick(JOBS);
-    // Meist 30-180 Minuten, gelegentlich sehr kurz oder ein langer Block.
     const roll = rnd();
     const minutes = roll < 0.1 ? between(5, 20) : roll > 0.92 ? between(240, 420) : between(30, 180);
 
     const start = new Date(cursor);
     const end = new Date(start.getTime() + minutes * 60000);
-    if (end.getHours() >= 20) break; // kein Arbeiten bis in die Nacht
+    if (end.getHours() >= 20) break;
 
     entries.push({
       id: `demo-${String(++n).padStart(4, '0')}`,
@@ -159,7 +137,6 @@ if (flag('--running')) {
   });
 }
 
-// Die App sortiert absteigend - gleich passend ablegen.
 entries.sort((a, b) => b.start - a.start);
 
 const json = JSON.stringify(entries, null, 2);
@@ -171,7 +148,6 @@ if (flag('--stdout')) {
 
 const target = join(OUT_DIR, 'times.json');
 
-// Echte Zeiterfassung darf nicht versehentlich verloren gehen.
 if (existsSync(target) && !flag('--force')) {
   const vorhanden = JSON.parse(readFileSync(target, 'utf8') || '[]');
   console.error(

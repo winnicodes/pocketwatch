@@ -3,9 +3,6 @@ import { save, reportStorageError } from "./persist";
 
 export function useServerObject<T extends object>(file: string, fallback: T) {
   const [data, setData] = useState<T>(fallback);
-  // Wie in useServerArray: nach einem fehlgeschlagenen Lesen zeigt die App die
-  // Standardwerte, und der erste Klick in den Einstellungen schriebe sie ueber
-  // die echte config.json.
   const failed = useRef(false);
 
   useEffect(() => {
@@ -22,6 +19,7 @@ export function useServerObject<T extends object>(file: string, fallback: T) {
 
   const update = useCallback(
     (updater: T | ((prev: T) => T)) => {
+      // Never overwrite data that failed to load.
       if (failed.current) return;
 
       setData(prev => {

@@ -67,8 +67,6 @@ test('fehlendes Intervall faellt auf 15 Minuten zurueck', () => {
   assert.equal(entryDuration(minutes(37), { rounding: true }), 30 * 60000);
 });
 
-// Mittwoch, 12.08.2026 - bewusst mitten in Woche, Monat und Jahr, damit ein
-// falscher Wochenbeginn oder ein off-by-one am Monatsende auffaellt.
 const anchor = new Date(2026, 7, 12, 15, 30);
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 

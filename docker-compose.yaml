@@ -1,10 +1,7 @@
 services:
   pocketwatch:
     image: ghcr.io/winnicodes/pocketwatch:latest
-    # Nur fuer "docker compose up -d --build" - normal kommt das Image von ghcr.io.
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: pocketwatch
     ports:
       - "8080:80"

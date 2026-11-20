@@ -33,17 +33,11 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
   const [formData, setFormData] = useState(initial);
   const [askDiscard, setAskDiscard] = useState(false);
 
-  // Beide Objekte entstehen aus demselben Literal, die Schluesselreihenfolge
-  // ist also gleich und der Textvergleich reicht.
   const dirty = JSON.stringify(formData) !== JSON.stringify(initial);
 
-  // Jeder Schliessweg laeuft hier durch, sonst gehen Aenderungen an dem Weg
-  // verloren, an den gerade niemand gedacht hat.
   const requestClose = () => (dirty ? setAskDiscard(true) : onClose());
 
-  // Erst im naechsten Frame: Chromiums CloseWatcher schliesst einen dialog, der
-  // waehrend genau dieses Escape aufgeht, sofort wieder - die Rueckfrage waere
-  // unsichtbar und Escape bliebe wirkungslos.
+  // Next frame: Chromium CloseWatcher closes a dialog opened by the same Escape.
   useEscape(() => requestAnimationFrame(requestClose));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -69,16 +63,8 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
 
   const setField = (name: string) => (v: string) => setFormData(prev => ({ ...prev, [name]: v }));
 
-  // Ein laufender Eintrag hat noch keine Dauer - dann faellt die obere Zelle der
-  // rechten Spalte weg und die Zeiten ruecken hoch, statt eine leere Flaeche
-  // ueber sich stehen zu lassen.
   const hasDuration = entry.end !== null;
 
-  // Ein Layout fuer beide Breiten: mobil untereinander, ab lg zweispaltig.
-  // Vorher standen hier zwei vollstaendige Baeume gleichzeitig im DOM - jedes
-  // Feld doppelt, jede Beschriftung doppelt, und deshalb aria-label statt
-  // htmlFor, weil doppelte ids die Zuordnung zerrissen haetten.
-  // Start und Ende sind baugleich - Datum breit, Uhrzeit fest.
   const timeRow = (label: string, dateField: string, timeField: string) => (
     <div className="flex flex-col gap-2">
       <span className={SECTION_LABEL}>{label}</span>
@@ -93,9 +79,6 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
         />
         <PickerBox
           mode="time"
-          // "8:22 AM" braucht mehr Platz als "08:22" - mit den 104px schnitt der
-          // Kasten das AM/PM ab. Beide Breiten ausgeschrieben, sonst findet
-          // Tailwind die zusammengesetzte Klasse nicht.
           className={`flex-none ${settings.timeFormat === '12h' ? 'w-[132px]' : 'w-[104px]'}`}
           value={formData[timeField as keyof typeof formData]}
           onChange={setField(timeField)}
@@ -107,7 +90,6 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
   );
 
   return (
-    // Mobil ein eigener Vollbild-Screen wie in der Vorlage, ab lg der Dialog.
     <div className={MODAL_BACKDROP}>
       <div
         className="flex-1 min-h-0 flex flex-col lg:flex-none lg:w-[960px] lg:max-w-[calc(100vw-3rem)] lg:bg-dark lg:border lg:border-active lg:rounded-[20px] lg:shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)] lg:overflow-hidden"
@@ -122,9 +104,6 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
           >
             <ChevronLeft size={17} strokeWidth={2} />
           </button>
-          {/* mr-auto auch mobil, sonst schoebe justify-between den Titel nach
-              rechts - dort steht jetzt kein "Fertig" mehr, das macht die
-              Fusszeile. */}
           <div className="flex flex-col gap-1 mr-auto min-w-0">
             <h2 className="text-[17px] lg:text-[22px] font-semibold text-light tracking-tight">{t('editModalTitle')}</h2>
             <span className="font-mono text-[13px] text-dim truncate">
@@ -141,11 +120,7 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
           </button>
         </div>
 
-        {/* flex-none an beiden Spalten: mobil scrollt das Formular, und was
-            scrollt, darf nicht schrumpfen. Im Grid ab lg ist flex-none wirkungslos. */}
         <form id="edit-entry" onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto flex flex-col lg:overflow-visible lg:grid lg:grid-cols-[minmax(0,1fr)_340px]">
-          {/* Dauer: mobil die Schlagzeile ganz oben, am Desktop der Kopf der
-              rechten Spalte. */}
           {hasDuration && (
             <div className="flex-none flex flex-col gap-5 border-divider lg:col-start-2 lg:row-start-1 lg:border-l lg:bg-darker px-5 pt-1 pb-5 lg:px-[26px] lg:pt-[26px]">
               <div className="flex flex-col gap-1.5">
@@ -176,9 +151,6 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
                 name="activity"
                 value={formData.activity}
                 onChange={handleChange}
-                // Greift nur mobil: dort ist der Block so hoch wie sein Inhalt, und
-                // fuenf Zeilen standen bei einer Zeile Text fast leer da. Am Desktop
-                // zieht flex-1 das Feld ohnehin auf die Hoehe der Spalte.
                 rows={3}
                 aria-label={t('activity')}
                 placeholder={t('activityPlaceholder')}
@@ -187,11 +159,6 @@ const EditModal: React.FC<EditModalProps> = ({ entry, onClose, onSave, onDelete,
             </div>
           </div>
 
-          {/* Start und Ende: mobil zuunterst, am Desktop die untere Haelfte der
-              rechten Spalte. Beide Zellen tragen Rand und Hintergrund selbst,
-              nebeneinanderliegende Gitterzeilen ergeben daraus eine durchgehende
-              Flaeche. Ohne Dauer darueber uebernimmt dieser Block deren Zeile
-              samt oberem Innenabstand. */}
           <div className={`flex-none flex flex-col gap-5 border-divider lg:col-start-2 lg:border-l lg:bg-darker px-5 pt-1 pb-5 lg:px-[26px] lg:pb-[30px] ${
             hasDuration ? 'lg:row-start-2 lg:pt-0' : 'lg:row-start-1 lg:row-span-2 lg:pt-[26px]'
           }`}>

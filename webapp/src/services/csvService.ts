@@ -2,7 +2,7 @@ import { format } from 'date-fns/format';
 import type { TimeEntry } from '../types';
 import { formatDuration, entryDuration, clockPattern, type RoundingSettings } from '../entryTimes';
 
-// Semikolon, weil Excel in deutscher Locale Kommas nicht als Trenner liest.
+// Semicolon: Excel with a German locale does not split on commas.
 const SEPARATOR = ';';
 
 const cell = (value: string) => `"${value.replace(/"/g, '""')}"`;
@@ -15,7 +15,6 @@ export function exportToCsv(
 ): void {
   const clock = clockPattern(settings);
 
-  // Reihenfolge kommt vom Aufrufer - der kennt die gewaehlte Sortierung.
   const rows = entries
     .map(entry => [
       format(new Date(entry.start), 'dd.MM.yyyy'),
@@ -31,7 +30,7 @@ export function exportToCsv(
     t('thDuration'),
   ];
 
-  // BOM, sonst zerlegt Excel Umlaute.
+  // BOM so Excel reads UTF-8.
   const csv = '﻿' + [header, ...rows]
     .map(row => row.map(cell).join(SEPARATOR))
     .join('\r\n');

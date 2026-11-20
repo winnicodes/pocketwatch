@@ -15,20 +15,13 @@ type Mode = 'date' | 'month' | 'time';
 
 interface PickerFieldProps {
   mode: Mode;
-  /** Gleiche Formate wie die nativen Felder: yyyy-MM-dd, yyyy-MM, HH:mm */
   value: string;
   onChange: (value: string) => void;
   className?: string;
   align?: 'left' | 'right';
   placeholder?: string;
   ariaLabel?: string;
-  /** Ueberschreibt die Beschriftung des Ausloesers, z.B. fuer Zeitraeume. */
   label?: string;
-  /**
-   * Hebt einen ganzen Zeitraum im Kalender hervor statt nur des einen Tages.
-   * Beim Wochenfilter ist der gespeicherte Tag nur der Bezugspunkt - gefiltert
-   * wird die ganze Woche, und genau die soll der Kalender auch zeigen.
-   */
   highlight?: { from: Date; to: Date };
 }
 
@@ -37,11 +30,6 @@ const PATTERN: Record<Mode, string> = { date: 'yyyy-MM-dd', month: 'yyyy-MM', ti
 const PANEL = 'bg-card border border-border-color rounded-[18px] shadow-2xl p-3';
 const NAV = 'w-8 h-8 rounded-[10px] flex items-center justify-center text-muted hover:text-light hover:bg-elevated';
 
-/**
- * Ersetzt input[type=date|month|time]. Die nativen Felder oeffnen ein Panel,
- * das Browser-Chrome ist und sich nicht gestalten laesst - Farben, Radien und
- * Schrift kommen dort vom Betriebssystem statt aus dem Design.
- */
 const PickerField: React.FC<PickerFieldProps> = ({
   mode, value, onChange, className = '', align = 'left', placeholder, ariaLabel, label: labelOverride, highlight,
 }) => {
@@ -60,8 +48,6 @@ const PickerField: React.FC<PickerFieldProps> = ({
     if (open && valid) setView(parsed);
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Fest positioniert im Portal: die Felder stecken teils in Containern mit
-  // overflow-hidden, dort wuerde ein absolut platziertes Panel abgeschnitten.
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) return;
     const place = () => {
@@ -92,11 +78,10 @@ const PickerField: React.FC<PickerFieldProps> = ({
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      // Sonst schliesst Escape gleich den ganzen Dialog mit.
       e.stopPropagation();
       setOpen(false);
     };
-    // Capture, weil die Dialoge Klicks per stopPropagation abfangen.
+    // Capture phase: dialogs stop propagation.
     document.addEventListener('mousedown', onDown, true);
     document.addEventListener('keydown', onKey, true);
     return () => {
@@ -115,15 +100,9 @@ const PickerField: React.FC<PickerFieldProps> = ({
     if (!valid) return placeholder ?? '—';
     if (mode === 'date') return format(parsed, 'dd.MM.yyyy');
     if (mode === 'month') return format(parsed, 'LLLL yyyy', { locale });
-    // Ueber formatClock, damit der Ausloeser dieselbe Schreibweise zeigt wie die
-    // Uhr dahinter und der Rest der App - sonst stuende hier 14:30 ueber einem
-    // Zifferblatt, das 2:30 PM meint.
     return formatClock(parsed.getTime(), settings);
   };
 
-  // Kalender kommt von react-day-picker: Pfeiltasten, Pos1/Ende, ARIA-Raster
-  // und Locales sind dort erledigt. Gestaltet wird ueber die --rdp-Variablen
-  // und ein paar Klassen, nicht durch Nachbau.
   const renderDate = () => (
     <DayPicker
       mode="single"
@@ -137,9 +116,6 @@ const PickerField: React.FC<PickerFieldProps> = ({
       showOutsideDays
       autoFocus
       className="pw-calendar"
-      // Eigener Modifier statt "mode=range": ausgewaehlt wird weiterhin ein
-      // einzelner Tag, der Zeitraum ist nur Anzeige. Ein Bereichsmodus wollte
-      // zwei Klicks und gaebe einen Zustand her, den der Filter nicht kennt.
       modifiers={highlight ? { pwRange: highlight } : undefined}
       modifiersClassNames={{ pwRange: 'pw-range' }}
       footer={

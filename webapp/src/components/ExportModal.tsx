@@ -13,21 +13,18 @@ import type { Period } from '../entryTimes';
 export interface ExportOptions {
     format: 'pdf' | 'csv';
     type: 'dateRange' | 'currentView' | 'period';
-    /** Nur bei type 'period': welcher Standardfilter und um welchen Tag herum. */
     period?: Period;
     anchor?: number;
     startDate?: string;
     endDate?: string;
     timesOnly: boolean;
     showCreatedAt: boolean;
-    /** Neueste zuerst statt aelteste zuerst. */
     sortDesc: boolean;
 }
 
 interface ExportModalProps {
     onClose: () => void;
     onExport: (options: ExportOptions) => void;
-    /** Zeile unter dem Titel: wie viel im aktuellen Verlauf steht. */
     summary?: string;
 }
 
@@ -36,7 +33,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
     const today = format(new Date(), 'yyyy-MM-dd');
     const [fileFormat, setFileFormat] = useState<'pdf' | 'csv'>('pdf');
     const [exportType, setExportType] = useState<ExportOptions['type']>('currentView');
-    // Wie im Verlauf: 'all' ist der Ausgangspunkt, hier heisst das "alles exportieren".
     const [period, setPeriod] = useState<Period>('all');
     const [anchor, setAnchor] = useState<Date>(new Date());
     const [startDate, setStartDate] = useState(today);
@@ -69,8 +65,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
     const isPeriod = exportType === 'period';
     const isPdf = fileFormat === 'pdf';
 
-    // Die Beschreibung steht nur noch im title: sichtbar bleibt das Format, wer
-    // den Unterschied nicht kennt, bekommt ihn per Hover und Screenreader.
     const formatCard = (value: 'pdf' | 'csv', Icon: typeof FileText, title: string, hint: string) => {
         const on = fileFormat === value;
         return (
@@ -80,8 +74,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
                 aria-checked={on}
                 title={hint}
                 onClick={() => setFileFormat(value)}
-                // Mobil teilen sich die beiden Karten die Breite, ab lg sind sie so
-                // breit wie ihr Inhalt - der Dialog ist dort viel breiter als sie.
                 className={`relative flex-1 lg:flex-none lg:w-[124px] min-h-28 rounded-2xl border flex flex-col items-center justify-center gap-2.5 transition-colors ${
                     on ? 'border-primary bg-primary/6' : 'border-border-color bg-card hover:border-[#3a4048]'
                 }`}
@@ -98,9 +90,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
     };
 
     const dateBox = (labelKey: string, value: string, onChange: (v: string) => void) => (
-        // So breit wie ein Datum plus Symbol - der Dialog ist 880 breit, das Feld
-        // haelt zehn Zeichen. Mobil teilen sich Von und Bis die Zeile, statt
-        // untereinander umzubrechen und rechts die halbe Breite leer zu lassen.
         <div className="flex flex-col gap-[7px] flex-1 lg:flex-none w-[170px]">
             <span className="text-[13px] font-medium text-muted">{t(labelKey)}</span>
             <PickerBox mode="date" value={value} onChange={onChange} ariaLabel={t(labelKey)} />
@@ -114,7 +103,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
     const cta = isPdf ? t('exportPdfCta') : t('exportCsvCta');
 
     return (
-        // Mobil ein eigener Vollbild-Screen, ab lg der Dialog - wie im Bearbeiten-Dialog.
         <div className={MODAL_BACKDROP}>
             <div className="flex-1 min-h-0 flex flex-col lg:flex-none lg:w-[880px] lg:max-w-[calc(100vw-3rem)] lg:max-h-[calc(100vh-4rem)] lg:bg-dark lg:border lg:border-active lg:rounded-xl lg:shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)] lg:overflow-hidden">
                 <div className="flex-none flex items-center lg:items-start gap-3 lg:gap-5 px-5 pt-1.5 pb-3.5 lg:px-8 lg:pt-[26px] lg:pb-[22px] lg:border-b lg:border-divider">
@@ -128,8 +116,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
                     </button>
                     <div className="flex flex-col gap-1 lg:mr-auto">
                         <h2 className="text-[17px] lg:text-[22px] font-semibold text-light tracking-tight">{t('exportModalTitle')}</h2>
-                        {/* Wie viel exportiert wird, gehoert auch mobil hierher - sonst
-                            druckt man den Knopf, ohne den Umfang zu kennen. */}
                         {summary && <span className="font-mono text-[13px] text-dim">{summary}</span>}
                     </div>
                     <button
@@ -143,15 +129,9 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-[26px] px-5 pt-1 pb-5 lg:px-8 lg:pt-[26px] lg:pb-7">
-                    {/* Format braucht nur die Breite seiner beiden Karten - der Zeitraum
-                        steht daneben statt darunter, sonst bleibt rechts alles leer. */}
                     <div className="grid gap-[26px] lg:grid-cols-[auto_1fr] lg:gap-8">
                         <div className="flex flex-col gap-[11px]">
                             <span className={SECTION_LABEL}>{t('exportFormat')}</span>
-                            {/* flex-1: die Karten wachsen auf die Hoehe der Zeile, die der
-                                Zeitraum daneben vorgibt - so enden sie unten auf einer Linie
-                                mit den Datumsfeldern, ohne dass irgendwo eine Hoehe steht,
-                                die man bei jeder Textaenderung nachziehen muesste. */}
                             <div role="radiogroup" aria-label={t('exportFormat')} className="flex gap-3 flex-1">
                                 {formatCard('pdf', FileText, 'PDF', t('exportPdfDesc'))}
                                 {formatCard('csv', Sheet, 'CSV', t('exportCsvDesc'))}
@@ -160,7 +140,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
 
                         <div className="flex flex-col gap-[11px]">
                             <span className={SECTION_LABEL}>{t('period')}</span>
-                            {/* self-start: die Schiene ist so breit wie ihre Knoepfe, nicht wie der Dialog. */}
                             <Segmented
                                 className="bg-card self-start"
                                 ariaLabel={t('period')}
@@ -172,29 +151,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
                                     { value: 'dateRange', label: t('exportDateRange') },
                                 ]}
                             />
-                            {/* Ein Platz fuer beide Einstellungen: der eigene Zeitraum zeigt
-                                hier zwei Datumsfelder, der Standardfilter seine Pillen.
-                                Bei "Aktuelle Ansicht" gibt es nichts einzustellen, am
-                                Desktop bleibt der Platz aber stehen (invisible statt
-                                ausgebaut): der Dialog steht mittig, jede Hoehenaenderung
-                                ruckt sonst den ganzen Inhalt. visibility:hidden nimmt die
-                                Felder aus Tastatur und Screenreader, das Feld ist also
-                                wirklich weg, nur der Platz bleibt. Die Mindesthoehe ist die
-                                des hoechsten Falls: Pillen plus Blaetterkasten, gemessen 98px.
-                                Die Datumsfelder brauchen 71, die Pillen allein 42 - ohne
-                                Reservierung sprang der mittig stehende Dialog bei jedem
-                                Wechsel. Die Zahl ist gemessen, nicht gerechnet: eine
-                                Aenderung an Segmented oder am Abstand darunter verschiebt sie,
-                                dann hier neu messen statt schaetzen. Mobil stapeln die
-                                Spalten - dort waere der reservierte Platz verschenkt. */}
                             <div className={`mt-[3px] lg:min-h-[98px] ${isRange || isPeriod ? '' : 'invisible max-lg:hidden'}`}>
                                 {isPeriod ? (
-                                    // items-start: die Schienen sind so breit wie ihre Knoepfe,
-                                    // nicht wie die Spalte - wie die Auswahl darueber.
-                                    // gap-3.5 sind 14px: die 11px Spaltenabstand plus die 3px
-                                    // Versatz des Platzhalters. So steht der Blaetterkasten
-                                    // genauso weit unter den Pillen wie die Pillen unter der
-                                    // Auswahl darueber.
                                     <div className="flex flex-col items-start gap-3.5">
                                         <PeriodFilter
                                             period={period}
@@ -215,12 +173,9 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
 
                     <div className="flex flex-col gap-[11px]">
                         <span className={SECTION_LABEL}>{t('exportContent')}</span>
-                        {/* divide-y zieht die Trennlinie zwischen die Zeilen, egal wie
-                            viele es sind - wie in den Einstellungen. */}
                         <div className="rounded-2xl border border-border-color bg-card overflow-hidden divide-y divide-divider">
                             {toggleRow('exportSortDesc', 'exportSortDescHint', sortDesc, () => setSortDesc(v => !v))}
                             {toggleRow('exportTimesOnly', 'exportTimesOnlyHint', timesOnly, () => setTimesOnly(v => !v))}
-                            {/* Die Fusszeile gibt es nur im PDF - CSV hat keine. */}
                             {isPdf && toggleRow('exportShowCreatedAt', 'exportShowCreatedAtHint', showCreatedAt, () => setShowCreatedAt(v => !v))}
                         </div>
                     </div>
@@ -231,8 +186,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, onExport, summary })
                         <span className={SECTION_LABEL}>{t('exportFile')}</span>
                         <span className="font-mono text-sm text-muted truncate">pocketwatch-export-{today}.{fileFormat}</span>
                     </div>
-                    {/* Kein Abbrechen: Kreuz oben und Escape schliessen den Dialog schon,
-                        und der Export loescht nichts, was man zuruecknehmen muesste. */}
                     <button
                         type="button"
                         onClick={handleExport}

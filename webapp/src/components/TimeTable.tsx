@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import type { TimeEntry } from '../types';
-// Fix: Import date-fns functions from their specific submodules to resolve export errors.
 import { format } from 'date-fns/format';
 import { startOfDay } from 'date-fns/startOfDay';
 import { endOfDay } from 'date-fns/endOfDay';
@@ -18,46 +17,26 @@ import { Search, X, SlidersHorizontal, Download } from 'lucide-react';
 
 interface TimeTableProps {
   entries: TimeEntry[];
-  /** Solange der Abruf laeuft, ist "keine Eintraege" eine Behauptung ins Blaue. */
   isLoading?: boolean;
   onEdit: (entry: TimeEntry) => void;
   isExportOpen: boolean;
   onCloseExport: () => void;
-  /** Export-Symbol der Mobilansicht - am Desktop sitzt der Einstieg in der Kopfzeile. */
   onOpenExport: () => void;
   className?: string;
-  /** Menueknopf der Mobilansicht - steht links neben der Ueberschrift. */
   menuButton?: React.ReactNode;
 }
 
 
-// Ein Raster fuer Spaltenkopf und Zeilen, sonst laufen die Spalten auseinander.
-// Mobil: Zeitstrahl | Text | Dauer, ab lg das 5-spaltige Raster der Vorlage.
-//
-// Die Zeitspalte haengt am Format: "07:45 – 10:10" passt in 132px,
-// "7:45 AM – 10:10 AM" nicht - dort brach jede Zeile auf zwei Zeilen um.
-// Beide Raster stehen ausgeschrieben da, weil Tailwind den Quelltext nach
-// vollstaendigen Klassennamen durchsucht; ein zusammengesetzter Name wuerde
-// nie erzeugt.
+// Literal class names so Tailwind can detect them.
 const ROW_GRID_BASE = 'grid-cols-[14px_minmax(0,1fr)_auto] gap-x-3.5 lg:gap-5';
 const ROW_GRID_24H = 'lg:grid-cols-[18px_132px_240px_minmax(0,1fr)_96px]';
 const ROW_GRID_12H = 'lg:grid-cols-[18px_162px_240px_minmax(0,1fr)_96px]';
 
-// Wie viele Eintraege auf einmal in den Verlauf kommen. Reicht fuer mehrere
-// Bildschirmhoehen, der Rest kommt auf Knopfdruck. Die Summen unten zaehlen
-// weiterhin alle gefundenen Eintraege, nicht nur die sichtbaren.
-// ponytail: fester Schnitt statt Virtualisierung - die kostet Tagesgruppen,
-// klebende Ueberschriften und variable Zeilenhoehen. Wenn jemand regelmaessig
-// tausende Zeilen am Stueck durchscrollt, ist sie der naechste Schritt.
+// ponytail: fixed page size, no virtualization. Virtualize if users scroll thousands of rows.
 const PAGE = 150;
 
-// Eingeklappte Leiste, aber gesetzter Wert: der Knopf faerbt sich, sonst
-// filtert man unsichtbar weiter und der Verlauf sieht grundlos leer aus.
 const ACTIVE_ICON = 'border border-primary bg-primary/10 text-primary';
 
-// "mehr" nur zeigen, wenn der Text wirklich abgeschnitten ist. Die Zeichenzahl
-// taugt dafuer nicht - die Spalte ist mal breit, mal schmal, und dieselben
-// 80 Zeichen passen am Desktop rein und mobil nicht.
 const ActivityText: React.FC<{
   text: string;
   expanded: boolean;
@@ -70,7 +49,6 @@ const ActivityText: React.FC<{
 
   useEffect(() => {
     const el = ref.current;
-    // Ausgeklappt ist nichts mehr abgeschnitten - dann bliebe kein Weg zurueck.
     if (!el || expanded) return;
     const check = () => setClipped(el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight);
     check();
@@ -108,22 +86,11 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
   const ROW_GRID = `${ROW_GRID_BASE} ${settings.timeFormat === '12h' ? ROW_GRID_12H : ROW_GRID_24H}`;
 
   const [searchTerm, setSearchTerm] = useState('');
-  // Mobil steht statt der Leiste nur eine Lupe - die Leiste kostete dauerhaft
-  // 46px plus Abstand, obwohl selten gesucht wird. Ab lg steht sie wie bisher.
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // Dasselbe fuer die Zeitraum-Pillen. Anders als die Suche wird der Zeitraum
-  // beim Zuklappen NICHT zurueckgesetzt - den will man ja behalten. Damit er
-  // nicht unsichtbar weiterfiltert, bleibt die Blaetter-Zeile stehen und der
-  // Knopf faerbt sich, solange etwas anderes als "Alle" gewaehlt ist.
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [period, setPeriod] = useState<Period>('all');
-  // Bezugspunkt des Zeitraums - damit laesst sich auch rueckwaerts blaettern,
-  // vorher zeigte "Woche" immer nur die laufende.
   const [anchor, setAnchor] = useState<Date>(new Date());
   const [expandedActivities, setExpandedActivities] = useState<Record<string, boolean>>({});
-  // Wie viele Zeilen im DOM stehen. Jede Aenderung an Suche, Zeitraum oder
-  // Ausklappen rendert alle sichtbaren Zeilen neu - bei ein paar tausend
-  // Eintraegen dauert das pro Tastenanschlag hunderte Millisekunden.
   const [limit, setLimit] = useState(PAGE);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -132,14 +99,10 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
     setLimit(PAGE);
   }, [searchTerm, period, anchor]);
 
-  // Aufgeklappt heisst tippbereit - sonst waere der Knopf zwei Handgriffe.
   useEffect(() => {
     if (isSearchOpen) searchRef.current?.focus();
   }, [isSearchOpen]);
 
-  // Klappt nur die Leiste ein, der Begriff bleibt stehen - so laesst sich der
-  // Platz zurueckgewinnen, ohne die Suche aufzugeben. Dass sie weiterlaeuft,
-  // zeigt der gefaerbte Knopf; leergeraeumt wird ueber das Kreuz im Feld.
   const toggleSearch = () => setIsSearchOpen(open => !open);
 
   const bounds = useMemo(() => periodBounds(period, anchor), [period, anchor]);
@@ -158,12 +121,9 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
       .sort((a, b) => b.start - a.start);
   }, [entries, searchTerm, bounds]);
 
-  // Nur diese Zeilen stehen im DOM - Summen und Export nutzen weiter die
-  // vollstaendige Liste.
   const visibleEntries = useMemo(() => filteredEntries.slice(0, limit), [filteredEntries, limit]);
   const hidden = filteredEntries.length - visibleEntries.length;
 
-  // Der Verlauf ist nach Tagen gruppiert, jede Gruppe trägt ihre eigene Summe.
   const dayGroups = useMemo(() => {
     const groups: { key: string; label: string; total: number; items: TimeEntry[] }[] = [];
     for (const entry of visibleEntries) {
@@ -197,9 +157,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
     if (type === 'currentView') {
       entriesToExport = [...filteredEntries];
     } else if (type === 'period') {
-      // Bezugspunkt ist immer heute - der Dialog blaettert nicht, dafuer gibt es
-      // den eigenen Zeitraum daneben. Ohne Grenzen ("Alle") geht alles raus,
-      // ungefiltert von Suche und Zeitraum des Verlaufs.
       const range = periodBounds(exportPeriod ?? 'all', exportAnchor ? new Date(exportAnchor) : new Date());
       entriesToExport = range
         ? entries.filter(e => e.start >= range.from.getTime() && e.start <= range.to.getTime())
@@ -218,7 +175,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
       });
     }
 
-    // Reihenfolge der Ausgabe. PDF und CSV uebernehmen sie unveraendert.
     entriesToExport.sort((a, b) => sortDesc ? b.start - a.start : a.start - b.start);
 
     if (fileFormat === 'csv') {
@@ -244,20 +200,12 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
             {menuButton}
             <h2 className="min-w-0 truncate text-[28px] lg:text-[22px] font-semibold text-light tracking-[-0.02em] lg:tracking-tight">{t('history')}</h2>
           </div>
-          {/* Suche, Filter und Export als Symbole - jede dieser Leisten kostete
-              mobil dauerhaft Hoehe, obwohl man sie selten braucht. Die
-              Wochensumme steht hier nicht mehr daneben: mit drei Knoepfen
-              blieb fuer die Ueberschrift nur noch "Verl..." uebrig, und auf dem
-              Erfassen-Tab steht sie ohnehin doppelt. */}
           <div className="lg:hidden flex items-center gap-2 flex-none">
             <button
               type="button"
               onClick={toggleSearch}
               aria-label={isSearchOpen ? t('close') : t('search')}
               aria-expanded={isSearchOpen}
-              // Immer die Lupe, nie ein Kreuz: das Kreuz im Feld raeumt den
-              // Begriff weg, dieser Knopf klappt nur die Leiste ein. Zwei
-              // Kreuze nebeneinander waeren nicht auseinanderzuhalten.
               className={`w-[38px] h-[38px] flex-none rounded-[12px] flex items-center justify-center transition-colors ${
                 searchTerm ? ACTIVE_ICON : CARD_BUTTON
               }`}
@@ -286,7 +234,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
           </div>
         </div>
 
-        {/* Mobil nur sichtbar, wenn die Lupe sie aufgeklappt hat; ab lg immer. */}
         <div className={`${isSearchOpen ? 'block' : 'hidden'} lg:block relative lg:w-[280px]`}>
           <Search size={15} strokeWidth={2} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dim pointer-events-none" />
           <input
@@ -309,7 +256,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
           )}
         </div>
 
-        {/* Unter lg nur sichtbar, wenn der Filterknopf sie aufgeklappt hat. */}
         <PeriodFilter
           period={period}
           onPeriodChange={setPeriod}
@@ -320,12 +266,7 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto lg:border-l border-divider px-5 lg:px-7 pb-6">
-        {/* Spaltenkopf gehoert in den Scrollbereich, sonst steht er um die Breite
-            der Scrollleiste neben den Spalten. Nur Desktop - mobil stehen die
-            Felder untereinander. */}
         <div className={`${ROW_GRID} hidden lg:grid sticky top-0 z-10 items-center bg-darker pt-4 pb-2`}>
-          {/* Ueber die Zeitstrahl-Spalte hinweg, damit die Beschriftung buendig
-              mit "Verlauf" steht statt um den Strahl eingerueckt. */}
           <span className={`${SECTION_LABEL} col-span-2`}>{t('period')}</span>
           <span className={SECTION_LABEL}>{t('thClient')}</span>
           <span className={SECTION_LABEL}>{t('thActivity')}</span>
@@ -340,10 +281,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
 
         {dayGroups.map(group => (
           <div key={group.key}>
-            {/* Klebt beim Scrollen unter dem Spaltenkopf (40px hoch, nur ab lg)
-                und wird von der naechsten Gruppe weggeschoben - sticky bleibt
-                immer innerhalb des eigenen Eltern-Blocks. z unter dem
-                Spaltenkopf, damit der obenauf bleibt. */}
             <div className={`${settings.stickyDayHeaders ? 'sticky top-0 lg:top-10 z-5 bg-darker ' : ''}flex items-center gap-3.5 pt-0.5 pb-2.5 lg:pt-3.5 lg:pb-2.5`}>
               <span className="text-xs lg:text-[13px] font-bold uppercase tracking-[0.12em] text-muted">{group.label}</span>
               <span className="flex-1 h-px bg-divider" />
@@ -356,10 +293,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
               const isLast = index === group.items.length - 1;
 
               return (
-                // Flaeche per negativem Rand verbreitert, damit der Hover nicht
-                // am Text klebt - die Inhalte stehen weiterhin an derselben Stelle.
-                // Die Zeile ist selbst der Knopf, sonst gaebe es keinen Weg per
-                // Tastatur zum Bearbeiten.
                 <div
                   key={entry.id}
                   role="button"
@@ -370,15 +303,7 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
                   }}
                   className={`${ROW_GRID} grid items-start -mx-3 px-3 pb-[18px] lg:py-3.5 rounded-[10px] cursor-pointer hover:bg-elevated focus-visible:bg-elevated outline-none transition-colors`}
                 >
-                  {/* Zeitstrahl: Punkt plus Linie zum vorigen/naechsten Eintrag des Tages.
-                      self-stretch ist noetig, sonst zieht das items-start der Zeile
-                      den Strahl auf Inhaltshoehe zusammen und das flex-1 der Linie
-                      hat nichts, worin es wachsen koennte - mobil fehlte sie deshalb.
-                      Der negative Rand unten ueberbrueckt den Zeilenabstand bis zum
-                      naechsten Punkt; ab lg uebernimmt das -my-3.5. */}
                   <div className="row-span-3 lg:row-span-1 lg:row-start-1 lg:col-start-1 self-stretch -mb-[18px] lg:-my-3.5 flex flex-col items-center">
-                    {/* Stummel ueber dem Punkt: mobil genau die 6px, die vorher als
-                        mt-1.5 am Punkt hingen - so bleibt er auf Höhe des Kundennamens. */}
                     <span className={`w-0.5 h-1.5 lg:h-5 ${isFirst ? 'bg-transparent' : 'bg-border-color'}`} />
                     <span className={`flex-none w-2.5 h-2.5 lg:w-[11px] lg:h-[11px] rounded-full ${
                       entry === visibleEntries[0]
@@ -396,7 +321,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
                     {formatDuration(duration)}
                   </span>
 
-                  {/* "mehr" steht mobil auf eigener Zeile, am Desktop hinter dem Text. */}
                   <div className="col-start-2 col-span-2 lg:row-start-1 lg:col-start-4 lg:col-span-1 flex flex-col lg:flex-row lg:items-baseline gap-[5px] lg:gap-2.5 min-w-0 mt-[5px] lg:mt-0">
                     <ActivityText
                       text={entry.activity}
@@ -416,8 +340,6 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
           </div>
         ))}
 
-        {/* Der Rest kommt auf Knopfdruck. Die Gesamtsumme unten zaehlt ihn
-            ohnehin schon mit, hier fehlen nur die Zeilen. */}
         {hidden > 0 && (
           <button
             type="button"
@@ -429,16 +351,13 @@ const TimeTable: React.FC<TimeTableProps> = ({ entries, isLoading = false, onEdi
         )}
       </div>
 
-      {/* Die Summe gehoert zum Filter darueber - ohne sie muesste man mobil im Kopf
-          addieren, was am Desktop die Fusszeile erledigt. */}
       <div className="flex flex-none h-14 lg:h-16 border-t border-divider bg-dark items-center justify-end gap-[18px] px-5 lg:px-7">
         <span className="text-sm font-semibold text-muted">{t('totalDuration')}</span>
         <span className="text-xl font-mono tnum font-bold text-light">{formatDuration(grandTotal)}</span>
       </div>
 
     </section>
-    {/* Ausserhalb der Sektion: unter lg blendet der Tab-Wechsel sie aus, und
-        ein Dialog in einem display:none-Baum waere unsichtbar. */}
+    {/* Outside <section>: display:none on mobile would hide the dialog. */}
     {isExportOpen && (
       <ExportModal
         onClose={onCloseExport}

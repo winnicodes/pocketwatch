@@ -6,11 +6,6 @@ import Segmented from './Segmented';
 import ToggleRow, { RowLabel } from './SettingRow';
 import { SECTION_LABEL } from '../ui';
 
-/**
- * Die Einstellungsfelder gibt es zweimal in der Vorlage: als Desktop-Dialog und
- * als "Mehr"-Screen der Mobilansicht. Beide rendern dieses Bauteil, damit die
- * Felder nicht auseinanderlaufen.
- */
 const ROW = 'flex items-center gap-4 px-[18px] py-[15px]';
 const GROUP = 'bg-card border border-border-color rounded-[16px] overflow-hidden divide-y divide-divider';
 
@@ -35,8 +30,6 @@ const SettingsFields: React.FC = () => {
     />
   );
 
-  // Intervall in Fuenferschritten, 1-60 Minuten. Groesser als eine Stunde
-  // rundet ganze Arbeitstage weg, kleiner als eine Minute rundet nichts.
   const stepMinutes = (direction: 1 | -1) => {
     setSettings(prev => ({
       ...prev,
@@ -44,7 +37,6 @@ const SettingsFields: React.FC = () => {
     }));
   };
 
-  // Minus und Plus unterscheiden sich nur in Richtung, Symbol und Beschriftung.
   const stepButton = (direction: 1 | -1, Icon: typeof Minus, label: string) => (
     <button
       type="button"
@@ -56,8 +48,6 @@ const SettingsFields: React.FC = () => {
     </button>
   );
 
-  // Beispiel statt Beschreibung: 00:37 durch dieselbe Funktion, die spaeter den
-  // Verlauf rechnet - so zeigt die Vorschau nie etwas anderes als das Ergebnis.
   const example = formatDuration(entryDuration({ start: 0, end: 37 * 60000 }, { ...settings, roundMinutes }));
 
   return (
@@ -78,7 +68,6 @@ const SettingsFields: React.FC = () => {
         </div>
       </div>
 
-      {/* Gruppierte Liste wie in der Vorlage: Beschriftung links, Wert rechts. */}
       <div className="flex flex-col gap-[11px]">
         <span className={SECTION_LABEL}>{t('settingsSectionAppearance')}</span>
         <div className={GROUP}>
@@ -121,8 +110,6 @@ const SettingsFields: React.FC = () => {
         <div className={GROUP}>
           {toggleRow('rounding', t('settingsRounding'), t('settingsRoundingHint'), !!settings.rounding)}
 
-          {/* Intervall und Aufrunden gehoeren zum Runden - ohne das ist beides
-              wirkungslos, also stehen sie nur dann da. */}
           {settings.rounding && (
             <>
               {toggleRow(
@@ -141,9 +128,6 @@ const SettingsFields: React.FC = () => {
                       inputMode="numeric"
                       aria-label={t('settingsRoundInterval')}
                       value={roundMinutes}
-                      // Beim Tippen darf das Feld kurz leer sein, gespeichert wird
-                      // erst ein Wert im erlaubten Bereich - sonst springt die 0
-                      // aus "0" zurueck auf 1 und man kann keine 30 eintippen.
                       onChange={(e) => {
                         const digits = e.target.value.replace(/[^0-9]/g, '').slice(0, 2);
                         const value = Number(digits);

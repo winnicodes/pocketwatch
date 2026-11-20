@@ -19,7 +19,6 @@ interface AppContextType {
   settings: Settings;
   setSettings: React.Dispatch<React.SetStateAction<Settings>>;
   t: (key: string, replacements?: Record<string, string | number>) => string;
-  /** date-fns-Locale zur eingestellten Sprache - Wochentage, Monatsnamen. */
   locale: Locale;
   isLocaleLoading: boolean;
 }
@@ -28,7 +27,6 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-  // Settings werden sauber aus config.json geladen (Objekt!)
   const [settings, setSettings] = useServerObject<Settings>(
     "config.json",
     {
@@ -36,7 +34,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       language: "de",
       timeFormat: "24h",
       stickyDayHeaders: true,
-      // Runden greift in die abgerechneten Zahlen ein - das schaltet man selbst ein.
       rounding: false,
       roundMinutes: 15,
       roundUp: false,
@@ -50,9 +47,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     setIsLocaleLoading(true);
 
-    // Die Sprachdateien tragen keinen Hash im Namen. Ohne Revalidierung haelt
-    // der Browser sie heuristisch fest und neue Schluessel erscheinen nach einem
-    // Update als Rohtext ("navTrack") statt als Uebersetzung.
+    // Locale files are not hashed; always revalidate.
     fetch(`/locales/${settings.language}.json`, { cache: 'no-cache' })
       .then(res => res.json())
       .then(data => {
@@ -83,8 +78,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     settings,
     setSettings,
     t,
-    // Vorher zog sich jede Ansicht ihr Locale selbst aus der Sprache - viermal
-    // dieselbe Zeile, viermal derselbe date-fns-Import.
     locale: settings.language === 'de' ? de : enUS,
     isLocaleLoading
   };

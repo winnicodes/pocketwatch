@@ -13,7 +13,6 @@ interface Settings extends RoundingSettings {
 
 type TFunction = (key: string, replacements?: Record<string, string | number>) => string;
 
-// Palette: paper-friendly version of the app theme (amber accent, neutral ink)
 const INK: [number, number, number] = [26, 28, 31];
 const MUTED: [number, number, number] = [122, 128, 136];
 const AMBER: [number, number, number] = [214, 160, 60];
@@ -22,19 +21,15 @@ const RULE: [number, number, number] = [226, 228, 231];
 
 const MARGIN = 16;
 
-// Kopfbereich. Rechts stehen Name und Zeitraum auf zwei Grundlinien, links der Titel.
 const PT_TO_MM = 25.4 / 72;
-const CAP_RATIO = 0.717;   // Versalhoehe Helvetica, Anteil der Schriftgroesse
-const META_SIZE = 10;      // pt, Name + Zeitraum
-const META_LINE_1 = 24;    // Grundlinie Name
-const META_LINE_2 = 30;    // Grundlinie Zeitraum
-// Titel so gross, dass seine Versalhoehe genau den rechten Block abdeckt: von der
-// Oberkante der ersten Zeile bis zur Grundlinie der zweiten. Faellt der Name weg,
-// bleibt die Groesse gleich - sonst wuerde der Titel je nach Einstellung springen.
+// Helvetica cap height and descender, relative to font size.
+const CAP_RATIO = 0.717;
+const META_SIZE = 10;
+const META_LINE_1 = 24;
+const META_LINE_2 = 30;
 const META_TOP = META_LINE_1 - META_SIZE * PT_TO_MM * CAP_RATIO;
 const TITLE_SIZE = (META_LINE_2 - META_TOP) / (PT_TO_MM * CAP_RATIO);
-// Die Trennlinie muss unter die Unterlaenge des Titels ("g" in Zeiterfassung)
-const DESC_RATIO = 0.207;  // Unterlaenge Helvetica, Anteil der Schriftgroesse
+const DESC_RATIO = 0.207;
 const RULE_Y = META_LINE_2 + TITLE_SIZE * PT_TO_MM * DESC_RATIO + 2.4;
 
 export const exportToPdf = (
@@ -56,11 +51,10 @@ export const exportToPdf = (
     const formatTimeForPdf = (date: Date) => {
         const formatted = format(date, timeFormatString);
         return settings.timeFormat === '12h'
-            ? formatted.replace(' ', '') // kompakter für AM/PM
+            ? formatted.replace(' ', '')
             : formatted;
     };
 
-    // Kein "(hh:mm)" mehr im Kopf: das umbrach die schmale Spalte auf zwei Zeilen
     const head = timesOnly
         ? [[t('thDate'), t('startTime'), t('endTime'), t('thDuration')]]
         : [[t('thDate'), t('startTime'), t('endTime'), t('thClient'), t('thActivity'), t('thDuration')]];
@@ -85,21 +79,16 @@ export const exportToPdf = (
 
     const columns = head[0].length;
 
-    // --- Kopfbereich -------------------------------------------------------
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(TITLE_SIZE);
     doc.setTextColor(...INK);
     doc.text(t('pdfTitle'), MARGIN, META_LINE_2);
 
-    // Name und Zeitraum stehen als Block rechts, rechtsbuendig untereinander
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(META_SIZE);
     doc.setTextColor(...MUTED);
     if (settings.name) doc.text(settings.name, right, META_LINE_1, { align: 'right' });
 
-    // Zeitraum aus den Einträgen ableiten. Aeltester und juengster Eintrag statt
-    // erste und letzte Zeile: bei absteigender Sortierung stuenden die sonst
-    // vertauscht im Kopf ("07.08.2026 – 13.08.2021").
     if (entries.length > 0) {
         const starts = entries.map(e => e.start);
         const from = format(new Date(Math.min(...starts)), dateFormatString);
@@ -111,7 +100,6 @@ export const exportToPdf = (
     doc.setLineWidth(0.8);
     doc.line(MARGIN, RULE_Y, right, RULE_Y);
 
-    // --- Tabelle -----------------------------------------------------------
     autoTable(doc, {
         startY: RULE_Y + 6,
         margin: { top: 20, bottom: 22, left: MARGIN, right: MARGIN },
@@ -124,7 +112,6 @@ export const exportToPdf = (
             { content: formatDuration(totalDurationMs) },
         ]],
         showFoot: 'lastPage',
-        // sonst zersaegt der Seitenumbruch mehrzeilige Zeilen mittendrin
         rowPageBreak: 'avoid',
         theme: 'plain',
         styles: {
@@ -158,10 +145,7 @@ export const exportToPdf = (
         },
         didParseCell: data => {
             if (data.section !== 'head') return;
-            // Kopfzeile in Versalien wirkt ruhiger als gemischte Schreibweise
             data.cell.text = data.cell.text.map(line => line.toUpperCase());
-            // Kopfzellen erben halign nicht aus columnStyles - sonst steht die
-            // Ueberschrift links waehrend die Werte darunter zentriert sind
             data.cell.styles.halign =
                 data.column.index === columns - 1 ? 'right'
                 : data.column.index === 1 || data.column.index === 2 ? 'center'
@@ -169,7 +153,6 @@ export const exportToPdf = (
         },
     });
 
-    // --- Fußzeile mit Branding --------------------------------------------
     const pages = doc.getNumberOfPages();
     const footerY = pageHeight - 12;
 
@@ -180,13 +163,8 @@ export const exportToPdf = (
         doc.setLineWidth(0.3);
         doc.line(MARGIN, footerY - 5, right, footerY - 5);
 
-        // footerY ist die Grundlinie, nicht die Mitte. Der Versatz ist am gerenderten
-        // PDF ausgemessen: Mitte des Schriftbilds von "pocketwatch" (Oberlaenge k/t/h
-        // bis Unterlaenge p) liegt 0,8 mm ueber der Grundlinie. Bei geaenderter
-        // Schriftgroesse neu messen, nicht schaetzen.
         const logoSize = 4.4;
         const logoCenterY = footerY - 0.8;
-        // Alias: sonst landet das PNG einmal pro Seite im Dokument
         doc.addImage(LOGO_PNG, 'PNG', MARGIN, logoCenterY - logoSize / 2, logoSize, logoSize, 'pocketwatch-logo', 'FAST');
 
         doc.setFont('helvetica', 'bold');
@@ -203,14 +181,10 @@ export const exportToPdf = (
         doc.text(`${page} / ${pages}`, right, footerY, { align: 'right' });
     }
 
-    // Herunterladen statt Vorschau-Fenster: das Fenster zeigte die PDF ueber
-    // eine data:-URI, und die hat keinen Dateinamen - Chrome bot sie als
-    // "Download.pdf" an. save() haengt den Namen ans Blob, wie beim CSV.
     doc.save(`pocketwatch-export-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
 };
 
-// Wortmarke fuer die Fusszeile: pocketwatch.svg als 128px-PNG, damit der PDF-Export
-// ohne SVG-Renderer (svg2pdf o.ae.) auskommt. Neu erzeugen nur, wenn sich das Logo aendert.
+// pocketwatch.svg as 128px PNG; jsPDF has no SVG support.
 const LOGO_PNG =
     "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAPHAAADxwFRnd3lAAAAGXRFWHRTb2Z0d2FyZQB3d3cu" +
     "aW5rc2NhcGUub3Jnm+48GgAAE5xJREFUeJztnXt41NWZxz/v+SXMLVwqVbtl10ovSqnddaWty8VMAipFd60WRamtipAJtrt0265W" +

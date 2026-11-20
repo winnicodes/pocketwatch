@@ -7,7 +7,6 @@ import { Play, Square, Pencil, AlertTriangle } from 'lucide-react';
 import ClientInput from './ClientInput';
 import { PRIMARY_BUTTON } from '../ui';
 
-// Ab hier ist ein laufender Timer vermutlich vergessenes Ausstempeln.
 const LONG_RUN_MS = 8 * 60 * 60 * 1000;
 
 interface TimeTrackerProps {
@@ -82,16 +81,9 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ isTracking, onStart, onStop, 
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Ein Aussehen fuer beide Breiten - das der Desktopvariante. Mobil standen
-          hier vorher andere Radien, Abstaende, Schriftgroessen und laufend sogar
-          eine andere Kartenfarbe. */}
       <div className={`rounded-xl border p-6 flex flex-col gap-[18px] bg-card ${
         isTracking ? 'border-[#2e333a]' : 'border-border-color'
       }`}>
-        {/* Zustand links, Datum rechts. Das Datum stand mobil ueber der
-            Ueberschrift und wirkte dort deplatziert - hier gehoert es zum
-            Zustand der Karte und kostet keine eigene Zeile. Kurzform, damit
-            es neben "Laeuft seit 14:07" auch auf schmalen Geraeten passt. */}
         <div className="flex items-baseline justify-between gap-3">
           {isTracking && currentEntry?.start ? (
             <span className="flex items-center gap-2 min-w-0 text-xs font-bold uppercase tracking-[0.14em] text-primary">
@@ -137,8 +129,6 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ isTracking, onStart, onStop, 
               placeholder={t('activityPlaceholder')}
               aria-label={t('activity')}
               rows={4}
-              // Kein festes h-[52px] mehr: das ueberstimmte rows und liess mobil
-              // genau eine Zeile stehen, obwohl vier angefordert waren.
               className="px-[15px] py-[13px] bg-card border border-border-color rounded-md text-[15px] leading-normal transition resize-none"
             />
           </div>
@@ -171,8 +161,6 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ isTracking, onStart, onStop, 
         </div>
       </div>
 
-      {/* Die Vorlage zeigt die Kacheln nur am Desktop - mobil stand die Tagessumme
-          damit nirgends. Jetzt auf beiden Seiten dieselben zwei Kacheln. */}
       <div className="flex gap-3">
         <div className="flex-1 bg-card border border-border-color rounded-2xl p-[15px] flex flex-col items-center gap-[3px]">
           <span className="text-xs uppercase tracking-widest text-muted">{t('today')}</span>

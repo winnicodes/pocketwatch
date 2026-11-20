@@ -13,20 +13,11 @@ import type { Period } from '../entryTimes';
 import Segmented from './Segmented';
 import PickerField from './PickerField';
 
-/**
- * Zeitraum-Auswahl: die Pillen Alle/Tag/Woche/Monat/Jahr und darunter der
- * Kasten zum Blaettern.
- *
- * Verlauf und Export-Dialog teilen sie sich. Die Pillen allein reichen nicht -
- * ohne den Kasten steht da "Woche", ohne dass jemand sieht welche, und die
- * vorige waere gar nicht erreichbar.
- */
 const PeriodFilter: React.FC<{
   period: Period;
   onPeriodChange: (period: Period) => void;
   anchor: Date;
   onAnchorChange: (anchor: Date) => void;
-  /** Klassen der Pillen-Schiene - der Verlauf klappt sie mobil ein. */
   railClassName?: string;
 }> = ({ period, onPeriodChange, anchor, onAnchorChange, railClassName = '' }) => {
   const { t, locale } = useAppContext();
@@ -52,7 +43,6 @@ const PeriodFilter: React.FC<{
 
   return (
     <>
-      {/* Mobil einzelne Pillen wie in der Vorlage, ab lg der Segmented Control. */}
       <Segmented
         pills
         className={`lg:bg-card ${railClassName}`}
@@ -68,7 +58,6 @@ const PeriodFilter: React.FC<{
         ]}
       />
 
-      {/* Zeitraum blaettern oder direkt anspringen; "Alle" braucht das nicht. */}
       {period !== 'all' && (
         <div className="flex items-center gap-1 p-1 bg-card border border-border-color rounded-[13px]">
           <button
@@ -79,13 +68,7 @@ const PeriodFilter: React.FC<{
           >
             <ChevronLeft size={16} />
           </button>
-          {/* Jahre nur ueber die Pfeile: ein Panel dafuer waere ein Raster aus
-              Jahreszahlen, und die paar Jahre eines Zeitkontos sind mit ein,
-              zwei Klicks erreicht. Lieber gar kein Knopf als ein toter. */}
           {period === 'year' ? (
-            // flex-1 nur mobil: dort ist der Kasten so breit wie die Spalte und
-            // die Beschriftung klebte sonst links am Pfeil. Ab lg ist er so
-            // breit wie sein Inhalt, da gibt es nichts zu verteilen.
             <span className="flex-1 lg:flex-none h-8 px-3 flex items-center justify-center text-sm font-semibold text-light whitespace-nowrap">
               {periodLabel()}
             </span>
@@ -93,12 +76,8 @@ const PeriodFilter: React.FC<{
             <PickerField
               mode={period === 'month' ? 'month' : 'date'}
               align="right"
-              // Nicht t('month'): der Monat-Tab heisst schon so, zwei Bedienelemente
-              // duerfen nicht denselben Namen tragen.
               ariaLabel={t('period')}
               label={periodLabel()}
-              // Bei "Woche" ist der gespeicherte Tag nur der Bezugspunkt -
-              // markiert gehoert die Woche, nach der auch gefiltert wird.
               highlight={period === 'week' ? periodBounds('week', anchor)! : undefined}
               value={format(anchor, period === 'month' ? 'yyyy-MM' : 'yyyy-MM-dd')}
               onChange={(v) => onAnchorChange(parse(v, period === 'month' ? 'yyyy-MM' : 'yyyy-MM-dd', new Date()))}

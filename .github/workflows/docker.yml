@@ -1,5 +1,3 @@
-# Baut das Image bei jedem Release-Tag (v1.2.0 -> :1.2.0, :1.2, :latest) und
-# schiebt es nach ghcr.io. Ersetzt das lokale "docker build && docker push".
 name: docker
 
 on:

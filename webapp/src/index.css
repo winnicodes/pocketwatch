@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-/* Selbst gehostet statt ueber Google Fonts: die App laeuft self-hosted, teils
-   ohne Internet - ueber eine CDN wuerde das Design dort still auf system-ui
-   zurueckfallen. Instrument Sans ist eine Variable Font, eine Datei je
-   Unicode-Bereich deckt 400-700 ab. */
 @font-face {
   font-family: 'Instrument Sans';
   font-style: normal;
@@ -54,43 +50,34 @@
 }
 
 @theme {
-  /* Redesign: neutral dark, amber accent only for running time / primary actions / sums */
   --color-primary: #f5c065;
-  --color-primary-dark: #ffd98a; /* hover state is lighter in the new design */
-  --color-darker: #0e0f11;       /* app surface / right pane */
-  --color-dark: #111316;         /* bars, side pane */
-  --color-card: #16181b;         /* cards, inputs, rows */
-  --color-elevated: #1c1f23;     /* hover surface, chips */
-  --color-active: #2b3037;       /* selected segment */
-  --color-on-primary: #15181b;   /* text/icons on amber */
+  --color-primary-dark: #ffd98a;
+  --color-darker: #0e0f11;
+  --color-dark: #111316;
+  --color-card: #16181b;
+  --color-elevated: #1c1f23;
+  --color-active: #2b3037;
+  --color-on-primary: #15181b;
   --color-light: #e9ebee;
   --color-muted: #969ca4;
   --color-dim: #6b7178;
   --color-danger: #e5484d;
-  --color-border-color: #262a2f; /* component outlines */
-  --color-divider: #1f2327;      /* structural rules: header, panes, footer */
+  --color-border-color: #262a2f;
+  --color-divider: #1f2327;
 
   --font-sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, monospace;
 
-  --radius-md: 14px;  /* inputs */
-  --radius-lg: 15px;  /* primary actions */
-  --radius-xl: 22px;  /* cards */
+  --radius-md: 14px;
+  --radius-lg: 15px;
+  --radius-xl: 22px;
 }
 
 @layer base {
-  /* native dark widgets for date/time inputs and scrollbars */
   :root {
     color-scheme: dark;
   }
 
-  /* Die Pfeil-Buttons an den Enden der Schiene sollen weg, der Balken reicht.
-     Dafuer gibt es keine Standard-Eigenschaft, nur ::-webkit-scrollbar-button
-     - und Chromium ignoriert die ::-webkit-scrollbar-Pseudoelemente komplett,
-     sobald scrollbar-width oder scrollbar-color gesetzt ist. Die Standard-
-     Eigenschaften gehen deshalb nur an Gecko, das die Pseudoelemente nicht
-     kennt; Blink und WebKit werden ueber die Pseudoelemente bedient.
-     Beide Wege ergeben denselben duennen Balken auf transparenter Schiene. */
   @supports (-moz-appearance: none) {
     :root {
       scrollbar-width: thin;
@@ -104,10 +91,6 @@
   }
   ::-webkit-scrollbar-track {
     background: transparent;
-    /* Chromium clippt die Scrollbar nicht am border-radius - ohne diesen
-       Abstand laeuft der Balken in gerundeten Feldern in die Ecke und steht
-       ueber der Kante. Etwa so gross wie der groesste Radius eines
-       Scrollbereichs (Textarea im Bearbeiten-Dialog, 13px). */
     margin-block: 12px;
   }
   ::-webkit-scrollbar-thumb {
@@ -124,7 +107,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* amber focus for every field — beats repeating focus:border-primary per input */
   input:focus, select:focus, textarea:focus {
     border-color: var(--color-primary);
     outline: none;
@@ -132,9 +114,6 @@
 
   ::placeholder { color: var(--color-dim); }
   ::selection { background: var(--color-primary); color: #15181b; }
-
-  /* Datum, Monat und Uhrzeit laufen ueber PickerField statt ueber die nativen
-     Felder - deren Panel ist Browser-Chrome und nicht gestaltbar. */
 }
 
 @utility tnum {
@@ -146,10 +125,6 @@
   50% { opacity: 0.35; }
 }
 
-/* react-day-picker aufs Design ziehen: es liefert die Bedienung (Pfeiltasten,
-   Pos1/Ende, PageUp/Down, ARIA-Raster, Locales), das Aussehen kommt von hier.
-   Bewusst NICHT in @layer base - das mitgelieferte style.css ist ungelayert,
-   und ungelayerte Regeln schlagen in der Kaskade jede Layer. */
 .pw-calendar {
   --rdp-accent-color: var(--color-primary);
   --rdp-accent-background-color: var(--color-elevated);
@@ -191,19 +166,12 @@
   color: var(--color-on-primary);
   font-weight: 700;
 }
-/* Ganzer Zeitraum beim Wochenfilter. Steht bewusst nach .rdp-outside und
-   .rdp-today: gleiche Spezifitaet, die spaetere Regel gewinnt - sonst faerbte
-   ein Tag aus dem Nachbarmonat oder der heutige Tag aus der Markierung heraus. */
 .pw-calendar .pw-range .rdp-day_button {
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-weight: 700;
 }
-/* Die Blende fuer Nachbarmonatstage haengt an der Zelle, nicht am Knopf - ein
-   opacity:1 weiter innen kaeme dagegen nicht an. Eine Woche ueber den
-   Monatswechsel sah sonst am Rand ausgeblichen aus. */
 .pw-calendar .pw-range { opacity: 1; }
-/* Der Tastaturfokus soll amber sein, nicht das Browser-Blau. */
 .pw-calendar .rdp-day_button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: -2px;

@@ -2,14 +2,6 @@ import React from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import PickerField from './PickerField';
 
-/**
- * Datum oder Uhrzeit als umrandetes Feld - das Standardaussehen fuer beides.
- * Vorher stand dieselbe Klassenkette in jedem Dialog noch einmal, und sie lief
- * auseinander: der eine faerbte beim Hover die Flaeche, der andere gar nichts.
- *
- * Hover faerbt die Flaeche, nicht den Rahmen: der zeigt schon Fokus und
- * geoeffnetes Panel, ein dritter Wert darauf wuerde sich mit beiden beissen.
- */
 const PickerBox: React.FC<{
   mode: 'date' | 'month' | 'time';
   value: string;
@@ -17,7 +9,6 @@ const PickerBox: React.FC<{
   ariaLabel: string;
   placeholder?: string;
   align?: 'left' | 'right';
-  /** Nur Breite und Position - das Aussehen kommt von hier. */
   className?: string;
 }> = ({ mode, className = '', ...picker }) => {
   const Icon = mode === 'time' ? Clock : Calendar;

@@ -1,14 +1,7 @@
 import React, { useId, useState } from 'react';
 
-// Ein Aussehen fuer beide Breiten - mobil stand hier vorher eine eigene
-// Variante mit anderer Hoehe, Flaeche, Rundung und Schriftgroesse.
 const FIELD = 'h-12 px-[15px] bg-card border border-border-color rounded-md text-[15px] transition';
 
-/**
- * Kundenfeld mit Vorschlaegen aus bereits erfassten Kunden. Bewusst kein
- * datalist: dessen Liste ist Browser-Chrome, samt Pfeil rechts im Feld, und
- * laesst sich weder faerben noch runden.
- */
 const ClientInput: React.FC<{
   value: string;
   onChange: (value: string) => void;
@@ -19,12 +12,9 @@ const ClientInput: React.FC<{
 }> = ({ value, onChange, suggestions, placeholder, ariaLabel, className = FIELD }) => {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
-  // Der Bearbeiten-Dialog haelt Mobil- und Desktop-Layout gleichzeitig im DOM;
-  // eine feste id waere dort doppelt und aria-controls zeigte ins Leere.
   const listId = useId();
 
   const needle = value.trim().toLowerCase();
-  // Exakte Treffer weg: eine Liste mit genau dem, was schon dasteht, hilft nicht.
   const matches = suggestions.filter(n => n.toLowerCase().includes(needle) && n !== value).slice(0, 6);
   const visible = open && matches.length > 0;
 
@@ -69,8 +59,7 @@ const ClientInput: React.FC<{
               key={name}
               role="option"
               aria-selected={i === active}
-              // mousedown statt click, sonst verliert das Feld vorher den Fokus
-              // und onBlur schliesst die Liste, bevor die Auswahl ankommt.
+              // mousedown runs before the input blur closes the list.
               onMouseDown={(e) => { e.preventDefault(); pick(name); }}
               onMouseEnter={() => setActive(i)}
               className={`px-[15px] py-2.5 text-[15px] cursor-pointer ${

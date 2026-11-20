@@ -5,8 +5,6 @@ import { readFile, writeFile, mkdir, rename, unlink } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-// docker-compose mountet <repo>/data nach /var/www/html/data - im Dev-Betrieb
-// arbeiten wir direkt auf demselben Verzeichnis.
 const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'data')
 const ALLOWED = ['times.json', 'config.json']
 
@@ -16,16 +14,7 @@ const json = (res: import('node:http').ServerResponse, code: number, body: unkno
   res.end(typeof body === 'string' ? body : JSON.stringify(body))
 }
 
-/**
- * Bildet api/read.php und api/write.php fuer "npm run dev" nach. Vite kann kein
- * PHP; ohne das hier braeuchte man fuer jede UI-Aenderung den Container, und
- * der Dev-Server wirft sonst nur ECONNREFUSED.
- *
- * Bewusst dieselben Regeln wie die PHP-Dateien: Whitelist, POST plus
- * application/json, fehlende Datei ergibt [], und geschrieben wird ueber eine
- * temporaere Datei. Produktiv bleibt PHP massgeblich - das hier laeuft nie im
- * Container, weil configureServer nur im Dev-Server greift.
- */
+// Dev-server stand-in for public/api/*.php.
 function devApi(): Plugin {
   return {
     name: 'pocketwatch-dev-api',
@@ -43,7 +32,6 @@ function devApi(): Plugin {
           return json(res, 415, { error: 'Content-Type must be application/json' })
         }
 
-        // Als Text einlesen statt ueber Buffer - spart @types/node im Typecheck.
         req.setEncoding('utf8')
         let raw = ''
         for await (const chunk of req) raw += chunk
@@ -57,7 +45,6 @@ function devApi(): Plugin {
 
         const file = payload.file ?? ''
         if (!ALLOWED.includes(file)) return json(res, 403, { error: 'File not allowed' })
-        // Kaputter Body darf eine gute Datei nicht leeren.
         if (payload.data == null) return json(res, 400, { error: 'Missing data' })
 
         const path = join(DATA_DIR, file)
@@ -76,12 +63,9 @@ function devApi(): Plugin {
   }
 }
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), devApi()],
-  // Nur fuer scripts/standalone.mjs: jspdf laedt html2canvas und dompurify per
-  // import() nach. Als eigene Chunk-Dateien waeren sie aus einer einzelnen
-  // HTML-Datei nicht erreichbar - der PDF-Export der Demo braeche dort.
+  // Standalone build: inline jspdf's dynamic imports into one file.
   build: process.env.PW_STANDALONE
     ? { rollupOptions: { output: { inlineDynamicImports: true } } }
     : {},

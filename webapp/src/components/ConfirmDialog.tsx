@@ -1,14 +1,6 @@
 import React from 'react';
 import { useAppContext } from '../contexts/AppContext';
 
-/**
- * Rueckfrage vor einer nicht umkehrbaren Aktion. Natives dialog statt eigenem
- * Overlay: showModal() legt es in den Top-Layer, also verlaesslich ueber jeden
- * anderen Dialog, und bringt Escape, Fokusfalle und inerten Hintergrund mit.
- *
- * Escape schliesst nur dieses Element - das keydown erreicht window trotzdem,
- * darunterliegende Escape-Handler muessen also auf dialog[open] pruefen.
- */
 const ConfirmDialog: React.FC<{
   message: string;
   confirmLabel: string;
