@@ -25,21 +25,36 @@
 
 ### Export
 
-- The dialog has a new period option: Standard filters. Select All, Day, Week, Month or Year, and step to an earlier or a later period.
+- The dialog has a new period option: **Standard filters**. Select **All, Day, Week, Month** or **Year**, and step to an earlier or a later period.
 - The dialog keeps the same height when you change the period option.
 
 ### Interface
 
-- The calendar marks the full week when the period is Week.
-- On a phone, the Edit dialog shows the client and the activity above the start and the end times.
+- The calendar marks the full week when the period is **Week**.
+- On a phone, the Edit dialog shows the client and the activity above the start and end times.
 - On a phone, the activity field is smaller.
 - Buttons with long text no longer cut the text on a narrow screen.
 - The week total in the header and its setting are removed.
 
+### Documentation
+
+- The README describes the installation from **Community Applications** on Unraid.
+
 ## 1.0.1
 
-- Corrected logo artwork
+### Interface
+
+- Corrected logo artwork: the lower left of the ring no longer bulges outwards. The PWA icon, the favicon, the header logo and the PDF logo are regenerated from the fixed source.
 
 ## 1.0.0
 
-- Initial release
+Initial release.
+
+### Features
+
+- Start and stop the timer with one click; a running entry continues after a reload
+- History grouped by day, with search and period filters
+- Edit and delete entries
+- Export as PDF report or CSV
+- Settings: name, language (English, German), time format, rounding
+- Docker image with Nginx and PHP-FPM; data in two JSON files
