@@ -1,135 +1,70 @@
 <div align="center">
 
-<img src="webapp/public/pocketwatch.svg" width="72" alt="">
+<img src="webapp/public/pocketwatch.svg" width="64" alt="">
 
 # pocketwatch
 
-**Minimal time tracking.
-Start the timer with one click. Send the PDF to the client. All data stays on your machine.**
+Minimal time tracking.<br>
+Start the timer with one click. Send the PDF to the client. All data stays on your machine.
 
-![Self-hosted](https://img.shields.io/badge/self--hosted-yes-f5c065?style=flat-square)
-![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
-![React 19](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![No cloud](https://img.shields.io/badge/Cloud-no%20thanks-16181b?style=flat-square)
-![License MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+[Live demo](https://winnicodes.github.io/pocketwatch/) · [Installation](#installation) · [Development](docs/dev.md)
+
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white) ![Self-hosted](https://img.shields.io/badge/self--hosted-yes-f5c065?style=flat-square) ![License MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 </div>
 
+<br>
+
 <img src="docs/desktop-overview.png" alt="pocketwatch on the desktop: the running timer on the left, the history grouped by day on the right">
 
----
+## Why pocketwatch?
 
-## 🚀 Try it yourself
+- **Your data stays yours.** Two JSON files on your disk. No account, no subscription, no tracking, no cloud.
+- **Fast.** No database, no loading spinner. Start and stop are one click. The timer continues after a reload.
+- **Ready to invoice.** PDF report with your name on it, or CSV for your spreadsheet.
+- **Desktop and phone.** Two columns on a large screen, one view at a time on a phone.
+- **One container.** `docker compose up -d` – runs on a NAS or a laptop.
 
-**[▶ Open the live demo](https://winnicodes.github.io/pocketwatch/)**
+> [!TIP]
+> The [live demo](https://winnicodes.github.io/pocketwatch/) is a single HTML file with the full app and demo data. Nothing is saved; a reload starts it again.
 
-The demo is one HTML file. It contains the full app and demo data. You do not need a
-server, Docker or an internet connection. You can start, stop, search, filter, edit and
-export. The demo does not save data. If you reload the page, the demo starts again.
+## Features
 
----
-
-## 💡 Why pocketwatch?
-
-|  | |
+| | |
 |---|---|
-| 🔒 **Your data stays yours** | The app writes two JSON files to your disk. There is no account, no subscription and no tracking. No data leaves the machine. The container also contains the fonts. |
-| ⚡ **Fast** | There is no database and no loading spinner. Start and stop are one click. The timer counts each second and continues after a reload. |
-| 🧾 **Ready to invoice** | Make a PDF report with your name on it, or a CSV file for your spreadsheet. Export the filtered view or a date range. |
-| 📱 **Desktop and phone** | The layout has two columns on a large screen. On a phone it shows one view at a time. |
-| 🐳 **One container** | Use `docker compose up -d`. The container runs on a NAS or a laptop. |
+| **Track** – client list, most recent first; timer to the second; edit the activity while it runs; totals for today and this week; notice after 8 hours. | **History** – search client and activity; grouped by day with a sticky day heading; long text expands with *more*; total of the selection in the footer. |
+| <img src="docs/desktop-idle.png" alt="The Track view with the client list and the Clock In button"> | <img src="docs/desktop-search.png" alt="The history filtered by a search for Gutenberg"> |
+| **Period** – Day, Week, Month or Year, with arrows to step back and forth. **All** shows the full history. | **Edit** – start and end with date and time; duration updates immediately; keyboard-friendly pickers; an end before the start is rejected; delete asks first. |
+| <img src="docs/desktop-period.png" alt="The history filtered to the current week with the period selector"> | <img src="docs/desktop-edit.png" alt="The Edit Entry dialog with date, time and duration"> |
+| **Export** – PDF with your name and page numbers, or CSV (semicolons, BOM for Excel). Current view, a standard period or a date range; newest first; optionally times only. | **Settings** – name for the PDF; German or English; 12 or 24 hours; sticky day heading; long-timer reminder; round times to 1–60 minutes. |
+| <img src="docs/desktop-export.png" alt="The Export dialog with the PDF and CSV cards and the period selector"> | <img src="docs/desktop-settings.png" alt="Settings with rounding switched on and the interval control"> |
 
----
+<details>
+<summary><b>On the phone</b></summary>
+<br>
 
-## 🎬 Functions
-
-### ⏱️ Track
-
-- 📇 Client list, most recent first
-- ⏱️ Timer to the second
-- ✍️ Change the activity while the timer runs
-- 📊 Totals for today and this week
-- ⚠️ Notice after 8 hours
-
-<img src="docs/desktop-idle.png" alt="The Track view with the client list and the Clock In button">
-
-### 📜 History
-
-- 🔍 Search in the client and the activity
-- 📅 Grouped by day
-- 📌 The day heading stays at the top
-- ➕ Long text expands with **more**
-- Σ Total of the selection in the footer
-
-<img src="docs/desktop-search.png" alt="The history filtered by a search for Gutenberg">
-
-### 🗓️ Period
-
-Select **Day**, **Week**, **Month** or **Year**. Use the arrows to go to an earlier or a later
-period. The total changes with the period. Select **All** to show the full history.
-
-<img src="docs/desktop-period.png" alt="The history filtered to the current week with the period selector">
-
-### ✏️ Edit
-
-- 📆 Start and end with date and time
-- ⏳ The duration updates immediately
-- ⌨️ Pickers that you can operate with the keyboard
-- 🚫 The app rejects an end before the start
-- ❓ Delete asks first
-
-<img src="docs/desktop-edit.png" alt="The Edit Entry dialog with date, time and duration">
-
-### 📤 Export
-
-- 📄 PDF report with your name and page numbers
-- 📊 CSV with semicolons and a BOM for Excel
-- 🎯 Current view, a standard period or a date range
-- 🔀 Newest first
-- ✂️ Times only, without activities
-
-<img src="docs/desktop-export.png" alt="The Export dialog with the PDF and CSV cards and the period selector">
-
-### ⚙️ Settings
-
-- 👤 Name for the PDF
-- 🌐 German or English
-- 🕐 12-hour or 24-hour
-- 📌 Pin the day heading
-- ⚠️ Reminder for a long timer
-- 🔢 **Round times** to an interval from 1 to 60 minutes, up or to the nearest interval
-
-<img src="docs/desktop-settings.png" alt="Settings with rounding switched on and the interval control">
-
----
-
-## 📱 Responsive
-
-Below 1024 px the app shows one view at a time. Use the drawer to change the view. Search,
-filter and export move into the header. Table rows become cards. Dialogs fill the screen.
+Below 1024 px the app shows one view at a time. Search, filter and export move into the header, table rows become cards and dialogs fill the screen. With “Add to Home Screen” pocketwatch opens without a browser bar.
 
 <table>
 <tr>
-<td width="25%"><img src="docs/mobile-track.png" alt="The Track view on a phone"><br><sub>⏱️ <b>Track</b></sub></td>
-<td width="25%"><img src="docs/mobile-history.png" alt="The history as cards"><br><sub>📜 <b>History</b></sub></td>
-<td width="25%"><img src="docs/mobile-drawer.png" alt="The navigation drawer"><br><sub>☰ <b>Drawer</b></sub></td>
-<td width="25%"><img src="docs/mobile-filter.png" alt="The period filter on a phone"><br><sub>🗓️ <b>Period</b></sub></td>
+<td width="25%"><img src="docs/mobile-track.png" alt="The Track view on a phone"></td>
+<td width="25%"><img src="docs/mobile-history.png" alt="The history as cards"></td>
+<td width="25%"><img src="docs/mobile-drawer.png" alt="The navigation drawer"></td>
+<td width="25%"><img src="docs/mobile-filter.png" alt="The period filter on a phone"></td>
 </tr>
 <tr>
-<td><img src="docs/mobile-edit.png" alt="Edit on the full screen"><br><sub>✏️ <b>Edit</b></sub></td>
-<td><img src="docs/mobile-export.png" alt="Export on the full screen"><br><sub>📤 <b>Export</b></sub></td>
-<td><img src="docs/mobile-settings.png" alt="Settings on a phone"><br><sub>⚙️ <b>Settings</b></sub></td>
-<td valign="middle"><sub>The app has a manifest, icons and a theme colour. Use “Add to Home Screen” to open pocketwatch without a browser bar.</sub></td>
+<td><img src="docs/mobile-edit.png" alt="Edit on the full screen"></td>
+<td><img src="docs/mobile-export.png" alt="Export on the full screen"></td>
+<td><img src="docs/mobile-settings.png" alt="Settings on a phone"></td>
+<td></td>
 </tr>
 </table>
 
----
+</details>
 
-## 🐳 Installation with Docker
+## Installation
 
-The image is on the GitHub Container Registry. You do not have to compile it, and you do
-not need Node.js on the host:
+The image is on the GitHub Container Registry. No build, no Node.js on the host.
 
 ```bash
 docker run -d --name pocketwatch -p 8080:80 \
@@ -137,97 +72,62 @@ docker run -d --name pocketwatch -p 8080:80 \
   ghcr.io/winnicodes/pocketwatch:latest
 ```
 
-Open <http://localhost:8080>. The app writes the time entries to the mounted `data/` folder.
+Open <http://localhost:8080>. Or put [docker-compose.yaml](docker-compose.yaml) in an empty folder and run `docker compose up -d`.
 
-With docker-compose: put [docker-compose.yaml](docker-compose.yaml) in an empty folder and run
-`docker compose up -d`.
+Pin a version tag (e.g. `ghcr.io/winnicodes/pocketwatch:1.2.0`) if you want to control when you update.
 
-Each release also has a version tag, for example `ghcr.io/winnicodes/pocketwatch:1.2.0`. Use
-a version tag if you want to control when you update.
+**Update**
 
-### Unraid
+```bash
+docker compose pull && docker compose up -d
+```
 
-pocketwatch is in **Community Applications**. Open the *Apps* tab, search for `pocketwatch`
-and select *Install*. The template contains the WebUI link, the port and the appdata path.
-The default values are correct:
+<details>
+<summary><b>Unraid</b></summary>
+<br>
+
+pocketwatch is in **Community Applications**: *Apps* → search `pocketwatch` → *Install*. The defaults are correct:
 
 | Setting | Default |
 |---|---|
 | WebUI | `8080` (host) → `80` (container) |
 | Data | `/mnt/user/appdata/pocketwatch` → `/var/www/html/data` |
 
-To update, use *Docker → Check for Updates → Apply*. You do not have to set PUID or PGID.
-The container corrects the owner of the appdata folder at start.
+Update via *Docker → Check for Updates → Apply*. PUID/PGID are not needed; the container fixes the owner of the appdata folder at start.
 
-<details>
-<summary>Add the container manually</summary>
-
-Do this only if you do not use Community Applications. Select *Docker → Add Container*, then:
-
-| Field | Value |
-|---|---|
-| Repository | `ghcr.io/winnicodes/pocketwatch:latest` |
-| Port | `8080` (host) → `80` (container) |
-| Path | `/mnt/user/appdata/pocketwatch` (host) → `/var/www/html/data` (container) |
+Without Community Applications: *Docker → Add Container* with repository `ghcr.io/winnicodes/pocketwatch:latest` and the port and path above. The image is `linux/amd64`.
 
 </details>
 
-The image is `linux/amd64`. Unraid uses this architecture.
+## Data and privacy
 
----
+All data lives in the mounted `data/` folder:
 
-## 🛡️ Security and privacy
+- `times.json` – the time entries
+- `config.json` – the settings
 
-pocketwatch does not collect data, does not send data and does not load external files.
-There is no analytics, there are no fonts from Google and there is no external API.
+Writes go to a temporary file that is then renamed, so an interrupted write cannot damage your data. To back up, copy the folder.
 
-> **Warning:** the API has **no authentication**. Use pocketwatch in your own LAN only. Do
-> not connect the container to the internet. A person who opens the URL can read and change
-> all time entries. For access from outside, put a reverse proxy with authentication or a
-> VPN in front of the container.
+pocketwatch sends nothing and loads nothing from outside: no analytics, no external fonts, no external API.
 
----
+> [!WARNING]
+> The API has **no authentication**. Run pocketwatch in your own LAN only. Anyone who can open the URL can read and change all entries. For outside access, use a reverse proxy with authentication or a VPN.
 
-## 💾 Data
+## Upcoming features
 
-All data is in the mounted `data/` folder:
+- Desktop client and Android app
+- Themes
+- Multiple profiles
 
-- `data/times.json` - the time entries
-- `data/config.json` - the settings (name, language, time format, rounding)
-
-The app writes to a temporary file and then renames it. An interrupted write cannot damage
-a good file. If the folder is mounted on the host, the data stays after an update and after
-a rebuild of the container.
-
-To make a backup, copy the `data/` folder.
-
----
-
-## 🔁 Updates
-
-```bash
-docker compose pull
-docker compose up -d
-```
-
----
-
-## 🛠️ Development
+## Development
 
 Architecture, build, project layout, tech stack and release: see [docs/dev.md](docs/dev.md).
 
----
+## Support
 
-## ❤️ Support
+Problems and feature requests: [GitHub Issues](../../issues).
+If pocketwatch saves you time, you can [buy me a coffee on Ko-fi](https://ko-fi.com/winnicodes).
 
-Please report problems and feature requests with GitHub Issues.
+## License
 
-If pocketwatch saves you time, you can buy me a coffee:
-**[ko-fi.com/winnicodes](https://ko-fi.com/winnicodes)**. The same link is at the bottom
-left in the app.
-
----
-
-## 📜 License
-
-MIT - see [LICENSE](LICENSE). You can use it and change it.
+[MIT](LICENSE)
