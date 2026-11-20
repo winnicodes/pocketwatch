@@ -1,15 +1,12 @@
 # Changelog
 
-## Unreleased
-
-- Sharper logo in the header and the menu
-- The Ko-fi link reads "Buy me a coffee"
-
 ## 1.2.0
 
 - Updated base image: Alpine 3.24, PHP 8.5
 - Updated frontend dependencies: React 19.3, Vite 8, TypeScript 7, Tailwind 4.3
 - The image is built and published by GitHub Actions
+- Sharper logo in the header and the menu
+- The Ko-fi link reads "Buy me a coffee"
 
 ## 1.1.0
 
