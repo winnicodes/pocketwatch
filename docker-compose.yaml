@@ -1,5 +1,7 @@
 services:
   pocketwatch:
+    image: ghcr.io/winnicodes/pocketwatch:latest
+    # Nur fuer "docker compose up -d --build" - normal kommt das Image von ghcr.io.
     build:
       context: .
       dockerfile: Dockerfile

@@ -10,7 +10,7 @@ Start the timer with one click. Send the PDF to the client. All data stays on yo
 ![Self-hosted](https://img.shields.io/badge/self--hosted-yes-f5c065?style=flat-square)
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![React 19](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![No cloud](https://img.shields.io/badge/Cloud-no%20thanks-16181b?style=flat-square)
 ![License MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
@@ -219,7 +219,7 @@ a problem.
 
 ### PowerShell helpers
 
-The repository contains small wrappers for Windows: `_docker-build.ps1`, `_docker-run.ps1`,
+The repository contains small wrappers for Windows: `_docker-run.ps1` (pulls the latest image),
 `_docker-stop.ps1`, `_docker-restart.ps1`, `_docker-logs.ps1` and `_docker-cleanup.ps1`.
 
 ---
@@ -283,7 +283,7 @@ pocketwatch/
 
 ## 🛠️ Local development
 
-You need Node.js 20 or later.
+You need Node.js 22.12 or later.
 
 ```bash
 cd webapp
@@ -305,21 +305,26 @@ npm run demo-data -- --running   # demo data in data/ (--force overwrites, --en 
 npm run standalone               # single-file demo (see above)
 ```
 
+### Release
+
+Push a version tag, for example `git tag v1.2.0 && git push origin v1.2.0`. GitHub Actions
+builds the image and publishes it as `:1.2.0`, `:1.2` and `:latest` on ghcr.io.
+
 ---
 
 ## 🔁 Updates
 
 ```bash
-git pull
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 ```
 
 ---
 
 ## 🚀 Tech stack
 
-React 19 · TypeScript · Tailwind CSS 4 · Vite 7 · date-fns · react-day-picker ·
-jsPDF + jsPDF-AutoTable · PHP 8.4 (FPM) · Nginx · Alpine Linux
+React 19 · TypeScript · Tailwind CSS 4 · Vite 8 · date-fns · react-day-picker ·
+jsPDF + jsPDF-AutoTable · PHP 8.5 (FPM) · Nginx · Alpine Linux
 
 ---
 
