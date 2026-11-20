@@ -38,7 +38,7 @@ export. The demo does not save data. If you reload the page, the demo starts aga
 | ⚡ **Fast** | There is no database and no loading spinner. Start and stop are one click. The timer counts each second and continues after a reload. |
 | 🧾 **Ready to invoice** | Make a PDF report with your name on it, or a CSV file for your spreadsheet. Export the filtered view or a date range. |
 | 📱 **Desktop and phone** | The layout has two columns on a large screen. On a phone it shows one view at a time. |
-| 🐳 **One container** | Use `docker compose up -d --build`. The container runs on a NAS, a Raspberry Pi or a laptop. |
+| 🐳 **One container** | Use `docker compose up -d`. The container runs on a NAS or a laptop. |
 
 ---
 
@@ -126,19 +126,6 @@ filter and export move into the header. Table rows become cards. Dialogs fill th
 
 ---
 
-## 🔧 Under the hood
-
-- The app stores the data in `data/times.json` and `data/config.json`.
-- Each write goes to a temporary file first. The app then renames the file.
-- Writes are debounced. No data is lost when you close the tab.
-- A running entry continues after a reload or on a different device.
-- The history loads in parts. The totals count all matches, not only the visible rows.
-- The container has Nginx and PHP-FPM on Alpine Linux.
-- The fonts are in the container. There is no CDN and no telemetry.
-- You can operate the app with the keyboard. Switches, lists and dialogs have ARIA roles.
-
----
-
 ## 🐳 Installation with Docker
 
 The image is on the GitHub Container Registry. You do not have to compile it, and you do
@@ -152,7 +139,10 @@ docker run -d --name pocketwatch -p 8080:80 \
 
 Open <http://localhost:8080>. The app writes the time entries to the mounted `data/` folder.
 
-Each release also has a version tag, for example `ghcr.io/winnicodes/pocketwatch:1.1.0`. Use
+With docker-compose: put [docker-compose.yaml](docker-compose.yaml) in an empty folder and run
+`docker compose up -d`.
+
+Each release also has a version tag, for example `ghcr.io/winnicodes/pocketwatch:1.2.0`. Use
 a version tag if you want to control when you update.
 
 ### Unraid
@@ -184,44 +174,6 @@ Do this only if you do not use Community Applications. Select *Docker → Add Co
 
 The image is `linux/amd64`. Unraid uses this architecture.
 
-### Build the image yourself
-
-The container compiles the frontend. You do not need Node.js on the host.
-
-```bash
-git clone https://github.com/winnicodes/pocketwatch.git
-cd pocketwatch
-docker compose up -d --build
-```
-
-The app writes the time entries to the `data/` folder next to `docker-compose.yaml`.
-
-### Without docker-compose
-
-Linux and macOS:
-
-```bash
-docker build -t pocketwatch-app .
-docker run -d -p 8080:80 -v "$(pwd)/data:/var/www/html/data" --name pocketwatch pocketwatch-app
-```
-
-Windows (PowerShell):
-
-```powershell
-docker build -t pocketwatch-app .
-docker run -d -p 8080:80 -v "${PWD}/data:/var/www/html/data" --name pocketwatch pocketwatch-app
-```
-
-> Docker does not accept a relative path such as `./data` for `-v`. Use `$(pwd)` or `${PWD}`.
-
-The container corrects the permissions of `data/` at start. A folder that root made is not
-a problem.
-
-### PowerShell helpers
-
-The repository contains small wrappers for Windows: `_docker-run.ps1` (pulls the latest image),
-`_docker-stop.ps1`, `_docker-restart.ps1`, `_docker-logs.ps1` and `_docker-cleanup.ps1`.
-
 ---
 
 ## 🛡️ Security and privacy
@@ -245,70 +197,9 @@ All data is in the mounted `data/` folder:
 
 The app writes to a temporary file and then renames it. An interrupted write cannot damage
 a good file. If the folder is mounted on the host, the data stays after an update and after
-a rebuild of the container. `_docker-cleanup.ps1` does not delete `data/`.
+a rebuild of the container.
 
 To make a backup, copy the `data/` folder.
-
----
-
-## 📁 Project layout
-
-```
-pocketwatch/
-├── webapp/                 # React frontend (Vite)
-│   ├── src/
-│   ├── public/
-│   │   ├── api/            # PHP API (read.php / write.php)
-│   │   ├── fonts/          # Instrument Sans / Space Mono (in the repository)
-│   │   └── locales/        # de.json / en.json
-│   ├── scripts/            # demo-data.mjs, standalone.mjs
-│   ├── dist/               # build output (not in Git)
-│   └── package.json
-│
-├── data/                   # persistent data (not in Git)
-│   ├── times.json          # time entries
-│   └── config.json         # settings
-│
-├── docs/                   # published with GitHub Pages
-│   ├── index.html          # single-file demo (npm run standalone)
-│   └── *.png               # screenshots for this README
-│
-├── Dockerfile              # production container (Nginx + PHP + dist)
-├── nginx.conf              # Nginx configuration
-├── docker-compose.yaml     # the recommended way to start
-└── README.md
-```
-
----
-
-## 🛠️ Local development
-
-You need Node.js 22.12 or later.
-
-```bash
-cd webapp
-npm ci
-npm run dev
-```
-
-Vite serves <http://localhost:5173> with hot reload. You do not need a container. Vite
-cannot run PHP, but `vite.config.ts` supplies `api/read.php` and `api/write.php` for
-development. It uses the same `data/` folder as the container. In production, PHP is
-authoritative.
-
-More scripts:
-
-```bash
-npm test         # tests for the time validation (node:test, no extra dependencies)
-npm run build    # typecheck (tsc) and production build into webapp/dist
-npm run demo-data -- --running   # demo data in data/ (--force overwrites, --en for English)
-npm run standalone               # single-file demo (see above)
-```
-
-### Release
-
-Push a version tag, for example `git tag v1.2.0 && git push origin v1.2.0`. GitHub Actions
-builds the image and publishes it as `:1.2.0`, `:1.2` and `:latest` on ghcr.io.
 
 ---
 
@@ -321,10 +212,9 @@ docker compose up -d
 
 ---
 
-## 🚀 Tech stack
+## 🛠️ Development
 
-React 19 · TypeScript · Tailwind CSS 4 · Vite 8 · date-fns · react-day-picker ·
-jsPDF + jsPDF-AutoTable · PHP 8.5 (FPM) · Nginx · Alpine Linux
+Architecture, build, project layout, tech stack and release: see [docs/dev.md](docs/dev.md).
 
 ---
 
