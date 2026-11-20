@@ -74,8 +74,14 @@ npm run standalone               # single-file demo in docs/index.html
 
 ### Release
 
-Push a version tag, for example `git tag v1.2.0 && git push origin v1.2.0`. GitHub Actions
-builds the image and publishes it as `:1.2.0`, `:1.2` and `:latest` on ghcr.io.
+1. In [CHANGELOG.md](../CHANGELOG.md), rename `## Unreleased` to the new version, e.g. `## 1.2.1`.
+   Copy the same lines into `<Changes>` in [templates/pocketwatch.xml](../templates/pocketwatch.xml).
+2. Set `version` in `webapp/package.json` and rebuild the demo (`npm run standalone`).
+3. Commit, then tag and push: `git tag v1.2.1 && git push origin main v1.2.1`.
+
+GitHub Actions publishes the image as `:1.2.1`, `:1.2` and `:latest` on ghcr.io and creates the
+GitHub release with the CHANGELOG.md section as its text. Without that section the
+workflow stops before it publishes anything.
 
 ## Docker
 
