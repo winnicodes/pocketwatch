@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import { readFile, writeFile, mkdir, rename, unlink } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -77,7 +78,7 @@ function devApi(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), devApi()],
+  plugins: [react(), tailwindcss(), devApi()],
   // Nur fuer scripts/standalone.mjs: jspdf laedt html2canvas und dompurify per
   // import() nach. Als eigene Chunk-Dateien waeren sie aus einer einzelnen
   // HTML-Datei nicht erreichbar - der PDF-Export der Demo braeche dort.
