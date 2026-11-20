@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenExport }) => {
   return (
     <header className="hidden h-[66px] flex-none bg-dark border-b border-divider lg:flex items-center justify-between gap-3 px-7">
       <div className="flex items-center gap-3">
-        <img src="/pocketwatch.svg" alt="" width={22} height={22} />
+        <img src="/pocketwatch.svg" alt="" width={20} height={20} />
         <span className="text-lg font-semibold text-light tracking-tight">pocketwatch</span>
       </div>
 

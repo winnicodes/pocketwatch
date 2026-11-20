@@ -75,7 +75,7 @@ const NavDrawer: React.FC<{
     >
       <div className="h-full flex flex-col gap-1.5 px-3 pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
         <div className="flex-none flex items-center gap-2.5 px-2 h-[66px]">
-          <img src="/pocketwatch.svg" alt="" width={22} height={22} />
+          <img src="/pocketwatch.svg" alt="" width={20} height={20} />
           <span className="text-lg font-semibold text-light tracking-tight">pocketwatch</span>
         </div>
 
