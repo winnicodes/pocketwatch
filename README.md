@@ -4,7 +4,7 @@
 
 # pocketwatch
 
-**Time tracking for freelancers and the self-employed.
+**Minimal time tracking.
 Start the timer with one click. Send the PDF to the client. All data stays on your machine.**
 
 ![Self-hosted](https://img.shields.io/badge/self--hosted-yes-f5c065?style=flat-square)
