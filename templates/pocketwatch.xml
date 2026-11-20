@@ -19,6 +19,11 @@
   <ExtraSearchTerms>time tracking timesheet freelance invoice timer stopwatch</ExtraSearchTerms>
   <License>MIT</License>
   <Changes>
+### 1.2.0
+- Updated base image: Alpine 3.24, PHP 8.5
+- Updated frontend dependencies: React 19.3, Vite 8, TypeScript 7, Tailwind 4.3
+- The image is built and published by GitHub Actions
+
 ### 1.1.0
 Data safety
 - The app does not write the time entries if it cannot read them first. Before, a failed read showed an empty history, and the next change replaced all entries.
@@ -44,7 +49,7 @@ Interface
 ### 1.0.0
 - Initial release
   </Changes>
-  <Date>2026-08-18</Date>
+  <Date>2026-11-20</Date>
   <MinVer>6.9</MinVer>
 
   <Screenshot>https://raw.githubusercontent.com/winnicodes/pocketwatch/main/docs/desktop-overview.png</Screenshot>
